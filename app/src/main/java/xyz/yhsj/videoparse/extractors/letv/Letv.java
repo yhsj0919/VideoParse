@@ -16,9 +16,6 @@ public class Letv {
 
         value = GenerateKeyRor(value, key % 17);
 
-
-        System.err.println(">>>>>>>>>>>>>>>>>" + value);
-
         return value;
     }
 
