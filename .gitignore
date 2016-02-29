@@ -1,3 +1,11 @@
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen### Android template
 # Built application files
 *.apk
 *.ap_
@@ -28,5 +36,3 @@ proguard/
 # Android Studio Navigation editor temp files
 .navigation/
 
-# Android Studio captures folder
-captures/
