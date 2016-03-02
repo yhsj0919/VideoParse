@@ -19,7 +19,7 @@ import xyz.yhsj.videoparse.utils.Base64Utils;
 public class YouKu {
 
     /**
-     * 根据url获取视频id
+     * 1、 根据url获取视频id
      *
      * @param url 视频网页地址
      * @return
@@ -49,8 +49,8 @@ public class YouKu {
     }
 
     /**
-     * 获取视频真实地址1
-     * <p>
+     * 2、获取视频真实地址1
+     * <p/>
      * params.addHeader("Referer", "http://static.youku.com/");
      * params.addHeader("Cookie", "__ysuid=1447684637230HKz");
      *
@@ -62,8 +62,8 @@ public class YouKu {
     }
 
     /**
-     * 获取视频真实地址2
-     * <p>
+     * 3、获取视频真实地址2
+     * <p/>
      * 两个请求需要在header加入下列属性
      * params.addHeader("Referer", "http://static.youku.com/");
      * params.addHeader("Cookie", "__ysuid=1447684637230HKz");
@@ -77,105 +77,7 @@ public class YouKu {
 
 
     /**
-     * 加密信息解码
-     *
-     * @param template   加密模板
-     * @param datas      数据
-     * @param isToBase64 是否转换Base64
-     * @return
-     */
-    private static String youkuEncoder(String template, byte[] datas, boolean isToBase64) {
-        String result = "";
-        List<Byte> bytesR = new ArrayList<>();
-        int f = 0, h = 0, q = 0;
-        int[] b = new int[256];
-        for (int i = 0; i < 256; i++)
-            b[i] = i;
-        while (h < 256) {
-            f = (f + b[h] + template.charAt(h % template.length())) % 256;
-            int temp = b[h];
-            b[h] = b[f];
-            b[f] = temp;
-            h++;
-        }
-        f = 0;
-        h = 0;
-        q = 0;
-        while (q < datas.length) {
-            h = (h + 1) % 256;
-            f = (f + b[h]) % 256;
-            int temp = b[h];
-            b[h] = b[f];
-            b[f] = temp;
-            byte[] bytes = new byte[]{(byte) (datas[q] ^ b[(b[h] + b[f]) % 256])};
-            bytesR.add(bytes[0]);
-            result += new String(bytes);
-            q++;
-        }
-        if (isToBase64) {
-            Byte[] bytes = new Byte[bytesR.size()];
-            Byte[] byteR = bytesR.toArray(bytes);
-            result = Base64Utils.encode(byteR);
-        }
-        return result;
-    }
-
-    /**
-     * 获取新的ep
-     *
-     * @param no
-     * @param fileid
-     * @param ep
-     */
-    public static EpEntity getEp(int no, String fileid, String ep) {
-        EpEntity epEntity = new EpEntity();
-        String number = "";
-
-        String template1 = "becaf9be";
-        String template2 = "bf7e5f01";
-
-        number = Integer.toHexString(no);
-        if (number.length() == 1) {
-            number = "0" + no;
-        } else {
-
-        }
-        fileid = fileid.substring(0, 8) + number + fileid.substring(10);
-
-        byte[] bytes = Base64Utils.decode(ep);
-        ep = new String(bytes);
-
-        String temp = youkuEncoder(template1, bytes, false);
-
-        //LogUtil.e(temp);
-
-        String[] part = temp.split("_");
-
-        String sid = part[0];
-        String token = part[1];
-
-        epEntity.setSid(sid);
-        epEntity.setToken(token);
-        epEntity.setFileid(fileid);
-
-        // LogUtil.w("sid:" + sid);
-        //LogUtil.w("token:" + token);
-        //LogUtil.w("fileid:" + fileid);
-
-        String whole = sid + "_" + fileid + "_" + token;
-        byte[] newbytes = whole.getBytes();
-        String epNew = youkuEncoder(template2, newbytes, true);
-        try {
-            epEntity.setEp(URLEncoder.encode(epNew, "UTF-8"));
-            //LogUtil.w("epNew:" + URLEncoder.encode(epNew, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return epEntity;
-    }
-
-    /**
-     * 获取包含下载地址的
+     * 4、获取包含下载地址的
      *
      * @param streamEntity
      * @param securityEntity
@@ -255,5 +157,101 @@ public class YouKu {
         return streamTypeEntity;
     }
 
+    /**
+     * 加密信息解码
+     *
+     * @param template   加密模板
+     * @param datas      数据
+     * @param isToBase64 是否转换Base64
+     * @return
+     */
+    private static String youkuEncoder(String template, byte[] datas, boolean isToBase64) {
+        String result = "";
+        List<Byte> bytesR = new ArrayList<>();
+        int f = 0, h = 0, q = 0;
+        int[] b = new int[256];
+        for (int i = 0; i < 256; i++)
+            b[i] = i;
+        while (h < 256) {
+            f = (f + b[h] + template.charAt(h % template.length())) % 256;
+            int temp = b[h];
+            b[h] = b[f];
+            b[f] = temp;
+            h++;
+        }
+        f = 0;
+        h = 0;
+        q = 0;
+        while (q < datas.length) {
+            h = (h + 1) % 256;
+            f = (f + b[h]) % 256;
+            int temp = b[h];
+            b[h] = b[f];
+            b[f] = temp;
+            byte[] bytes = new byte[]{(byte) (datas[q] ^ b[(b[h] + b[f]) % 256])};
+            bytesR.add(bytes[0]);
+            result += new String(bytes);
+            q++;
+        }
+        if (isToBase64) {
+            Byte[] bytes = new Byte[bytesR.size()];
+            Byte[] byteR = bytesR.toArray(bytes);
+            result = Base64Utils.encode(byteR);
+        }
+        return result;
+    }
 
+    /**
+     * 获取新的ep
+     *
+     * @param no
+     * @param fileid
+     * @param ep
+     */
+    private static EpEntity getEp(int no, String fileid, String ep) {
+        EpEntity epEntity = new EpEntity();
+        String number = "";
+
+        String template1 = "becaf9be";
+        String template2 = "bf7e5f01";
+
+        number = Integer.toHexString(no);
+        if (number.length() == 1) {
+            number = "0" + no;
+        } else {
+
+        }
+        fileid = fileid.substring(0, 8) + number + fileid.substring(10);
+
+        byte[] bytes = Base64Utils.decode(ep);
+        ep = new String(bytes);
+
+        String temp = youkuEncoder(template1, bytes, false);
+
+        //LogUtil.e(temp);
+
+        String[] part = temp.split("_");
+
+        String sid = part[0];
+        String token = part[1];
+
+        epEntity.setSid(sid);
+        epEntity.setToken(token);
+        epEntity.setFileid(fileid);
+
+        // LogUtil.w("sid:" + sid);
+        //LogUtil.w("token:" + token);
+        //LogUtil.w("fileid:" + fileid);
+
+        String whole = sid + "_" + fileid + "_" + token;
+        byte[] newbytes = whole.getBytes();
+        String epNew = youkuEncoder(template2, newbytes, true);
+        try {
+            epEntity.setEp(URLEncoder.encode(epNew, "UTF-8"));
+            //LogUtil.w("epNew:" + URLEncoder.encode(epNew, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return epEntity;
+    }
 }

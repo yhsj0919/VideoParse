@@ -3,6 +3,7 @@ package xyz.yhsj.videoparse;
 import org.junit.Test;
 
 import xyz.yhsj.videoparse.extractors.letv.Letv;
+import xyz.yhsj.videoparse.utils.DateUtils;
 
 import static org.junit.Assert.*;
 
@@ -12,6 +13,6 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
-        assertEquals(733315218, Letv.getTkey(1456724440));
+        assertEquals("21832160", Letv.getVideoId("http://www.letv.com/ptv/vplay/21832160.html"));
     }
 }

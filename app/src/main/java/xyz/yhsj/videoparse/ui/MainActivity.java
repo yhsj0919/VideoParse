@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
+
 import org.xutils.common.Callback;
 import org.xutils.common.util.LogUtil;
 import org.xutils.http.RequestParams;
@@ -18,11 +20,13 @@ import org.xutils.x;
 import xyz.yhsj.event.OnItemClickListener;
 import xyz.yhsj.videoparse.R;
 import xyz.yhsj.videoparse.extractors.letv.Letv;
+import xyz.yhsj.videoparse.extractors.letv.entity.LetvEntity;
 import xyz.yhsj.videoparse.extractors.youku.YouKu;
 import xyz.yhsj.videoparse.extractors.youku.entity.SecurityEntity;
 import xyz.yhsj.videoparse.extractors.youku.entity.StreamEntity;
 import xyz.yhsj.videoparse.extractors.youku.entity.YouKuEntity;
 import xyz.yhsj.videoparse.ui.adapter.VideoListAdapter;
+import xyz.yhsj.videoparse.utils.DateUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,9 +59,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-//                getYouKu();
+                //getYouKu();
 
-                Letv.getTkey(1456724440);
+                getLeTv();
 
             }
         });
@@ -148,6 +152,41 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 Log.e(">>>>>>>", "", ex);
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
+
+    private void getLeTv() {
+        RequestParams params = new RequestParams(Letv.getApiUrl(Letv.getVideoId("http://www.letv.com/ptv/vplay/21832160.html")));
+        params.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36 LBBROWSER");
+        params.addHeader("Connection", "close");
+        params.addHeader("Accept-Encoding", "identity");
+        x.http().get(params, new Callback.CommonCallback<LetvEntity>() {
+            @Override
+            public void onSuccess(LetvEntity result) {
+
+                if (result.getStatuscode() == 1001) {
+                    LogUtil.w(result.getPlayurl().getTitle());
+                } else {
+                    LogUtil.e("第一次请求失败，" + new Gson().toJson(result));
+                }
+
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                LogUtil.e("第一次请求失败", ex);
             }
 
             @Override
