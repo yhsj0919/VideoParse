@@ -8,14 +8,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.functions.Action1;
 import xyz.yhsj.event.OnItemClickListener;
 import xyz.yhsj.videoparse.R;
 import xyz.yhsj.videoparse.extractors.youku.YouKu;
-import xyz.yhsj.videoparse.extractors.youku.entity.SecurityEntity;
-import xyz.yhsj.videoparse.extractors.youku.entity.StreamEntity;
+import xyz.yhsj.videoparse.extractors.youku.entity.VideoDownLoadEntity;
 import xyz.yhsj.videoparse.extractors.youku.entity.YouKuEntity;
 import xyz.yhsj.videoparse.extractors.youku.impl.YouKuImpl;
 import xyz.yhsj.videoparse.ui.adapter.VideoListAdapter;
@@ -29,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.fab)
     FloatingActionButton fab;
     private VideoListAdapter adapter;
-
-    private SecurityEntity securityEntity;
 
     private YouKuImpl youKuImpl;
 
@@ -67,31 +66,23 @@ public class MainActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(ViewGroup parent, View itemView, int position) {
+
                 System.out.println(adapter.getItem(position).getSegs().get(0).getDownlad_url());
 
-//                RequestParams params = new RequestParams(streamEntity.getSegs().get(0).getDownlad_url());
-//
-//                x.http().get(params, new Callback.CommonCallback<String>() {
-//                    @Override
-//                    public void onSuccess(String result) {
-//                        LogUtil.e(result);
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable ex, boolean isOnCallback) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(CancelledException cex) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onFinished() {
-//
-//                    }
-//                });
+                youKuImpl.getVideoDownloadUrl(adapter.getItem(position).getSegs().get(0).getDownlad_url())
+                        .subscribe(new Action1<List<VideoDownLoadEntity>>() {
+                            @Override
+                            public void call(List<VideoDownLoadEntity> videoDownLoadEntities) {
+                                for (VideoDownLoadEntity item : videoDownLoadEntities) {
+
+                                }
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+
+                            }
+                        });
 
             }
         });
@@ -107,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
         youKuImpl.getYouKuData(videoId).subscribe(new Action1<YouKuEntity>() {
             @Override
             public void call(YouKuEntity youKuEntity) {
-                securityEntity = youKuEntity.getData().getSecurity();
                 adapter.setDatas(youKuEntity.getData().getStream());
             }
         }, new Action1<Throwable>() {

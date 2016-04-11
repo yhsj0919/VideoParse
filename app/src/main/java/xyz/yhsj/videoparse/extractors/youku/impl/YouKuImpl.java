@@ -12,6 +12,7 @@ import xyz.yhsj.videoparse.common.RetrofitClient;
 import xyz.yhsj.videoparse.extractors.youku.YouKu;
 import xyz.yhsj.videoparse.extractors.youku.entity.SecurityEntity;
 import xyz.yhsj.videoparse.extractors.youku.entity.StreamEntity;
+import xyz.yhsj.videoparse.extractors.youku.entity.VideoDownLoadEntity;
 import xyz.yhsj.videoparse.extractors.youku.entity.YouKuEntity;
 import xyz.yhsj.videoparse.extractors.youku.service.YouKuService;
 
@@ -26,6 +27,12 @@ public class YouKuImpl {
         youKuService = RetrofitClient.getInstance().create(YouKuService.class);
     }
 
+    /**
+     * 获取数据1
+     *
+     * @param vid
+     * @return
+     */
     private Observable<YouKuEntity> getYouKuData12(String vid) {
         return youKuService
                 .getYouKuData12("http://static.youku.com/", "__ysuid=1447684637230HKz", vid)
@@ -33,6 +40,12 @@ public class YouKuImpl {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    /**
+     * 获取数据2
+     *
+     * @param vid
+     * @return
+     */
     private Observable<YouKuEntity> getYouKuData10(String vid) {
         return youKuService
                 .getYouKuData10(vid)
@@ -40,6 +53,12 @@ public class YouKuImpl {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    /**
+     * 获取格式化后的数据实体
+     *
+     * @param vid
+     * @return
+     */
     public Observable<YouKuEntity> getYouKuData(final String vid) {
         return getYouKuData12(vid)
                 .flatMap(new Func1<YouKuEntity, Observable<YouKuEntity>>() {
@@ -69,7 +88,13 @@ public class YouKuImpl {
                     }
                 })
                 .retry(2);
+    }
 
+
+    public Observable<List<VideoDownLoadEntity>> getVideoDownloadUrl(final String url) {
+        return youKuService.getVideoDownloadUrl(url).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
 
     }
+
 }
