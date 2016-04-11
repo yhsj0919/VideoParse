@@ -1,14 +1,10 @@
 package xyz.yhsj.videoparse.extractors.youku.entity;
 
-import org.xutils.http.annotation.HttpResponse;
-
-import xyz.yhsj.videoparse.utils.JsonResponseParser;
-
 /**
  * 视频实体
  * Created by LOVE on 2016/2/14.
  */
-@HttpResponse(parser = JsonResponseParser.class)
+
 public class YouKuEntity {
     private double cost;
     private DataEntity data;

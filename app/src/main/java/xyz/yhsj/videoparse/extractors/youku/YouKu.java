@@ -14,6 +14,7 @@ import xyz.yhsj.videoparse.extractors.youku.entity.StreamTypeEntity;
 import xyz.yhsj.videoparse.utils.Base64Utils;
 
 /**
+ * 优酷解析工具
  * Created by LOVE on 2016/2/3.
  */
 public class YouKu {

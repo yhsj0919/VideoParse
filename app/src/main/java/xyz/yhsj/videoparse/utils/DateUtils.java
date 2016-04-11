@@ -1,6 +1,6 @@
 package xyz.yhsj.videoparse.utils;
 
-import org.xutils.common.util.LogUtil;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -180,7 +180,7 @@ public class DateUtils {
         try {
             returnDate = dateFormat.parse(strDate);
         } catch (ParseException e) {
-            LogUtil.e("parseDate failed !");
+            Log.e("Utils", "parseDate failed !");
 
 
         }

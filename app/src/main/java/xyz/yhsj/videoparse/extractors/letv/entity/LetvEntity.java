@@ -1,16 +1,11 @@
 package xyz.yhsj.videoparse.extractors.letv.entity;
 
-import org.xutils.http.annotation.HttpResponse;
-
 import java.util.ArrayList;
-
-import xyz.yhsj.videoparse.utils.JsonResponseParser;
 
 /**
  * 乐视实体
  * Created by LOVE on 2016/3/1.
  */
-@HttpResponse(parser = JsonResponseParser.class)
 public class LetvEntity {
     private String danmu;
     private String firstlook;
