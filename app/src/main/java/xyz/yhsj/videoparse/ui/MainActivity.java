@@ -5,8 +5,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -15,11 +18,14 @@ import butterknife.ButterKnife;
 import rx.functions.Action1;
 import xyz.yhsj.event.OnItemClickListener;
 import xyz.yhsj.videoparse.R;
+import xyz.yhsj.videoparse.extractors.letv.Letv;
+import xyz.yhsj.videoparse.extractors.letv.entity.LetvEntity;
+import xyz.yhsj.videoparse.extractors.letv.impl.LetvDataImpl;
 import xyz.yhsj.videoparse.extractors.youku.YouKu;
 import xyz.yhsj.videoparse.extractors.youku.entity.VideoDownLoadEntity;
 import xyz.yhsj.videoparse.extractors.youku.entity.YouKuEntity;
 import xyz.yhsj.videoparse.extractors.youku.impl.YouKuImpl;
-import xyz.yhsj.videoparse.ui.adapter.VideoListAdapter;
+import xyz.yhsj.videoparse.ui.adapter.YouKuVideoListAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,9 +35,10 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     @Bind(R.id.fab)
     FloatingActionButton fab;
-    private VideoListAdapter adapter;
+    private YouKuVideoListAdapter adapter;
 
     private YouKuImpl youKuImpl;
+    private LetvDataImpl letvImpl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +52,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         youKuImpl = new YouKuImpl();
+        letvImpl = new LetvDataImpl();
 
-        adapter = new VideoListAdapter(recyclerView);
+        adapter = new YouKuVideoListAdapter(recyclerView);
 
         recyclerView.setAdapter(adapter);
 
@@ -54,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                getYouKu();
+                //getYouKu();
 
-//                getLeTv();
+                getLetv();
 
 
             }
@@ -67,14 +75,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(ViewGroup parent, View itemView, int position) {
 
-                System.out.println(adapter.getItem(position).getSegs().get(0).getDownlad_url());
-
                 youKuImpl.getVideoDownloadUrl(adapter.getItem(position).getSegs().get(0).getDownlad_url())
                         .subscribe(new Action1<List<VideoDownLoadEntity>>() {
                             @Override
                             public void call(List<VideoDownLoadEntity> videoDownLoadEntities) {
                                 for (VideoDownLoadEntity item : videoDownLoadEntities) {
-
+                                    System.out.println(item.getServer());
                                 }
                             }
                         }, new Action1<Throwable>() {
@@ -109,38 +115,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void getLeTv() {
-//        RequestParams params = new RequestParams(Letv.getApiUrl(Letv.getVideoId("http://www.letv.com/ptv/vplay/21832160.html")));
-//        params.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36 LBBROWSER");
-//        params.addHeader("Connection", "close");
-//        params.addHeader("Accept-Encoding", "identity");
-//        x.http().get(params, new Callback.CommonCallback<LetvEntity>() {
-//            @Override
-//            public void onSuccess(LetvEntity result) {
-//
-//                if (result.getStatuscode() == 1001) {
-//                    LogUtil.w(result.getPlayurl().getTitle());
-//                } else {
-//                    LogUtil.e("第一次请求失败，" + new Gson().toJson(result));
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onError(Throwable ex, boolean isOnCallback) {
-//                LogUtil.e("第一次请求失败", ex);
-//            }
-//
-//            @Override
-//            public void onCancelled(CancelledException cex) {
-//
-//            }
-//
-//            @Override
-//            public void onFinished() {
-//
-//            }
-//        });
+    private void getLetv() {
+
+        letvImpl.getLetvData(Letv.getVideoId("http://www.letv.com/ptv/vplay/21832160.html")).subscribe(new Action1<LetvEntity>() {
+            @Override
+            public void call(LetvEntity letvEntity) {
+                if (letvEntity.getStatuscode() == 1001) {
+                    System.out.println(letvEntity.getPlayurl().getTitle());
+                } else {
+                    System.out.println("第一次请求失败，" + new Gson().toJson(letvEntity));
+                }
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+
+            }
+        });
     }
 
 }

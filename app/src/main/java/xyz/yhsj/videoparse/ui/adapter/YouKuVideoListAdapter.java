@@ -12,9 +12,9 @@ import xyz.yhsj.videoparse.extractors.youku.entity.StreamEntity;
 /**
  * Created by LOVE on 2016/2/17.
  */
-public class VideoListAdapter extends BaseRecyclerViewAdapter<StreamEntity> {
+public class YouKuVideoListAdapter extends BaseRecyclerViewAdapter<StreamEntity> {
 
-    public VideoListAdapter(RecyclerView recyclerView) {
+    public YouKuVideoListAdapter(RecyclerView recyclerView) {
         super(recyclerView, R.layout.video_list_item);
     }
 

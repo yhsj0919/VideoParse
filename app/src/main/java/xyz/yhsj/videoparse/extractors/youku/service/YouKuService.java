@@ -16,7 +16,7 @@ import xyz.yhsj.videoparse.extractors.youku.entity.YouKuEntity;
 public interface YouKuService {
 
     @GET("http://play.youku.com/play/get.json?ct=12")
-    Observable<YouKuEntity> getYouKuData12(@Header("Referer") String Cookie, @Header("Cookie") String Referer, @Query("vid") String vid);
+    Observable<YouKuEntity> getYouKuData12(@Header("Referer") String Referer, @Header("Cookie") String Cookie, @Query("vid") String vid);
 
     @GET("http://play.youku.com/play/get.json?ct=10")
     Observable<YouKuEntity> getYouKuData10(@Query("vid") String vid);
