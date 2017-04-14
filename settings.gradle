@@ -1,1 +1,1 @@
-include ':app', ':adapterpro', ':mvpro'
+include ':app', ':parse'
