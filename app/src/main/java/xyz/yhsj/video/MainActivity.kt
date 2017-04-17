@@ -2,8 +2,11 @@ package xyz.yhsj.video
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import xyz.yhsj.parse.extractors.Letv
 import xyz.yhsj.parse.extractors.Netease
+import xyz.yhsj.parse.extractors.YouKu
 import xyz.yhsj.parse.runAsync
+import xyz.yhsj.parse.utils.HttpRequest
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,7 +27,13 @@ class MainActivity : AppCompatActivity() {
 
 //                Netease.netease_download("http://music.163.com/#/program?id=2")
 //                Netease.netease_download("http://music.163.com/#/radio?id=3697004")
-                Netease.netease_download("http://music.163.com/#/mv?id=420144")
+//                Netease.netease_download("http://music.163.com/#/mv?id=420144")
+
+
+//                YouKu.download("http://v.youku.com/v_show/id_XODMxNzI4MjQ4.id_XODMxNzI4MjQ4html")
+
+                Letv.letv_download("http://www.le.com/ptv/vplay/27085339.html?ref=100000001")
+                //
             } catch (e: Exception) {
                 e.printStackTrace()
             }

@@ -16,7 +16,6 @@ import kotlin.experimental.xor
 object Netease {
     fun netease_download(url: String) {
         if ("163.fm" in url) {
-
         }
         if ("music.163.com" in url) {
             netease_cloud_music_download(url)
@@ -115,7 +114,10 @@ object Netease {
         println("歌曲名称: $title")
         println("歌曲名称: $artistName")
 
-        println(videos)
+        val vkey = videos.keys().asSequence().toList().maxBy { it.toInt() }
+
+        println(vkey)
+        println(videos[vkey])
     }
 
     /**
