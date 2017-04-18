@@ -34,6 +34,8 @@ class MainActivity : AppCompatActivity() {
 
                 Letv.letv_download("http://www.le.com/ptv/vplay/27085339.html?ref=100000001")
                 //
+//                val sss = Letv.decode("VC_01123456789123456789123456789".toByteArray())
+//                println(sss)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

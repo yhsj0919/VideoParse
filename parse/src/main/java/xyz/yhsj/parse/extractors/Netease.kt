@@ -105,6 +105,9 @@ object Netease {
 
     }
 
+    /**
+     * 视频下载
+     */
     fun netease_video_download(video: JSONObject) {
         val title = "${video["name"]}"
         val artistName = "${video["artistName"]}"
