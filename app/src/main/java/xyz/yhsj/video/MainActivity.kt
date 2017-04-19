@@ -2,6 +2,7 @@ package xyz.yhsj.video
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import xyz.yhsj.parse.extractors.Iqiyi
 import xyz.yhsj.parse.extractors.Letv
 import xyz.yhsj.parse.extractors.Netease
 import xyz.yhsj.parse.extractors.YouKu
@@ -32,10 +33,12 @@ class MainActivity : AppCompatActivity() {
 
 //                YouKu.download("http://v.youku.com/v_show/id_XODMxNzI4MjQ4.id_XODMxNzI4MjQ4html")
 
-                Letv.letv_download("http://www.le.com/ptv/vplay/27085339.html?ref=100000001")
+//                Letv.letv_download("http://www.le.com/ptv/vplay/27085339.html?ref=100000001")
                 //
 //                val sss = Letv.decode("VC_01123456789123456789123456789".toByteArray())
 //                println(sss)
+
+                Iqiyi.download("http://www.iqiyi.com/v_19rrlq5w00.html")
             } catch (e: Exception) {
                 e.printStackTrace()
             }
