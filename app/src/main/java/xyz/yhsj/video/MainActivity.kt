@@ -2,10 +2,7 @@ package xyz.yhsj.video
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import xyz.yhsj.parse.extractors.Iqiyi
-import xyz.yhsj.parse.extractors.Letv
-import xyz.yhsj.parse.extractors.Netease
-import xyz.yhsj.parse.extractors.YouKu
+import xyz.yhsj.parse.extractors.*
 import xyz.yhsj.parse.runAsync
 import xyz.yhsj.parse.utils.HttpRequest
 
@@ -15,10 +12,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         runAsync {
-            //            KuGou.kugou_download("http://www.kugou.com/yy/album/single/960327.html")
+            //KuGou.kugou_download("http://www.kugou.com/yy/album/single/960327.html")
             //KuGou.kugou_download("http://www.kugou.com/yy/special/single/24745.html")
             //单曲
-//             Netease.netease_download("http://music.163.com/#/song?id=27808044")
+            //Netease.netease_download("http://music.163.com/#/song?id=27808044")
 
             try {
                 //专辑
@@ -38,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 //                val sss = Letv.decode("VC_01123456789123456789123456789".toByteArray())
 //                println(sss)
 
-                Iqiyi.download("http://www.iqiyi.com/v_19rrlq5w00.html")
+                Sohu.download("http://tv.sohu.com/20100805/n274004371.shtml")
             } catch (e: Exception) {
                 e.printStackTrace()
             }
