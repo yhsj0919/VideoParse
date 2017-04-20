@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 //                val sss = Letv.decode("VC_01123456789123456789123456789".toByteArray())
 //                println(sss)
 
-                Sohu.download("http://tv.sohu.com/20100805/n274004371.shtml")
+                Sohu.download("http://my.tv.sohu.com/pl/9186474/88706000.shtml")
             } catch (e: Exception) {
                 e.printStackTrace()
             }
