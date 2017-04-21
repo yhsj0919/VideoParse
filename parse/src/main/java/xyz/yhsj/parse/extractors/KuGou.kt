@@ -1,11 +1,13 @@
 package xyz.yhsj.parse.extractors
 
 import org.json.JSONObject
+import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.utils.HttpRequest
 import xyz.yhsj.parse.jsonObject
+import xyz.yhsj.parse.match1
 import xyz.yhsj.parse.utils.Base64
 import xyz.yhsj.parse.utils.MD5
-import xyz.yshj.parse.match1
+
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -13,7 +15,8 @@ import java.util.regex.Pattern
 /**酷狗
  * Created by LOVE on 2017/2/28 028.
  */
-object KuGou {
+object KuGou : Parse {
+
     /**
      * 下载列表
      */
@@ -79,7 +82,7 @@ object KuGou {
     private fun kugou_5sing(url: String) {
         val html = HttpRequest.get(url).body()
 
-        val ticket = match1(html, "\"ticket\":\\s*\"(.*)\"")
+        val ticket = "\"ticket\":\\s*\"(.*)\"".match1(html)
 
         if (ticket == null) {
             println("未发现")
@@ -105,7 +108,7 @@ object KuGou {
 
     }
 
-    fun kugou_download(url: String) {
+    override fun download(url: String) {
         //http://5sing.kugou.com/yc/3287805.html
         //http://www.kugou.com/song/#B274BD2549B723B966A52DBC5921AA7B
         //http://www.kugou.com/yy/album/single/1776093.html

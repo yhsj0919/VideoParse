@@ -1,27 +1,22 @@
 package xyz.yhsj.parse.extractors
 
+import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
+import xyz.yhsj.parse.match1
 import xyz.yhsj.parse.utils.HttpRequest
-import xyz.yshj.parse.match1
-import java.io.BufferedReader
-import java.io.InputStream
 import java.util.*
-import java.util.regex.Pattern
-import kotlin.experimental.and
-import kotlin.experimental.xor
 
 /**乐视
  * Created by LOVE on 2017/4/17 017.
  */
-object Letv {
+object Letv : Parse {
 
-
-    fun letv_download(url: String) {
+    override fun download(url: String) {
         val regex1 = "http://www.letv.com/ptv/vplay/(\\d+).html"
         val regex2 = "http://www.le.com/ptv/vplay/(\\d+).html"
         val regex3 = "vid=\"(\\d+)\""
 
-        val vid = match1(url, regex1) ?: match1(url, regex2) ?: match1(url, regex3) ?: ""
+        val vid = regex1.match1(url) ?: regex2.match1(url) ?: regex3.match1(url) ?: ""
 
         letv_download_by_vid(vid)
     }

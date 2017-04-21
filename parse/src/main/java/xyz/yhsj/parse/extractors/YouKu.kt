@@ -1,9 +1,10 @@
 package xyz.yhsj.parse.extractors
 
+import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
+import xyz.yhsj.parse.match1
 import xyz.yhsj.parse.utils.Base64
 import xyz.yhsj.parse.utils.HttpRequest
-import xyz.yshj.parse.match1
 import kotlin.experimental.and
 import kotlin.experimental.xor
 
@@ -11,11 +12,11 @@ import kotlin.experimental.xor
 /**优酷解析
  * Created by LOVE on 2017/4/13 013.
  */
-object YouKu {
+object YouKu : Parse {
     val template1 = "becaf9be"
     val template2 = "bf7e5f01"
 
-    fun download(url: String) {
+    override fun download(url: String) {
         getdata(get_vid_from_url(url))
     }
 
@@ -30,7 +31,7 @@ object YouKu {
         val regex2 = "player\\.youku\\.com/player\\.php/sid/([a-zA-Z0-9=]+)/v\\.swf"
         val regex3 = "loader\\.swf\\?VideoIDS=([a-zA-Z0-9=]+)"
         val regex4 = "player\\.youku\\.com/embed/([a-zA-Z0-9=]+)"
-        return match1(url, regex1) ?: match1(url, regex2) ?: match1(url, regex3) ?: match1(url, regex4) ?: ""
+        return regex1.match1(url) ?: regex2.match1(url) ?: regex3.match1(url) ?: regex4.match1(url) ?: ""
     }
 
     /**

@@ -11,9 +11,11 @@
 
 视频
 
-1,优酷网     youku.com          支持
+1,优酷网      youku.com         支持
 
 2,乐视网      le.com            支持
 
 3,爱奇艺      iqiyi.com         支持
+
+4,搜狐        sohu.com          支持
 

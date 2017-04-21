@@ -2,19 +2,20 @@ package xyz.yhsj.parse.extractors
 
 
 import org.json.JSONObject
+import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
+import xyz.yhsj.parse.match1
 import xyz.yhsj.parse.utils.Base64
 import xyz.yhsj.parse.utils.HttpRequest
 import xyz.yhsj.parse.utils.MD5
-import xyz.yshj.parse.match1
 import kotlin.experimental.xor
 
 
 /**网易
  * Created by LOVE on 2017/3/1 001.
  */
-object Netease {
-    fun netease_download(url: String) {
+object Netease : Parse {
+    override fun download(url: String) {
         if ("163.fm" in url) {
         }
         if ("music.163.com" in url) {
@@ -28,9 +29,9 @@ object Netease {
      * 音乐分类
      */
     private fun netease_cloud_music_download(url: String) {
-        var rid = match1(url, "\\Wid=(.*)")
+        var rid = "\\Wid=(.*)".match1(url)
         if (rid == null) {
-            rid = match1(url, "/(\\d+)/?")
+            rid = "/(\\d+)/?".match1(url)
         }
 
         if ("album" in url) {

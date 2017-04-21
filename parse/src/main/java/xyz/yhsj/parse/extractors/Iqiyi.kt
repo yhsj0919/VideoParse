@@ -1,10 +1,12 @@
 package xyz.yhsj.parse.extractors
 
 import org.json.JSONObject
+import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
+import xyz.yhsj.parse.match1
 import xyz.yhsj.parse.utils.HttpRequest
 import xyz.yhsj.parse.utils.MD5
-import xyz.yshj.parse.match1
+
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -12,13 +14,13 @@ import kotlin.collections.HashMap
 /**爱奇艺
  * Created by LOVE on 2017/4/18 018.
  */
-object Iqiyi {
+object Iqiyi : Parse {
 
     val vd_2_id = mapOf(10 to "4k", 19 to "4k", 5 to "BD", 18 to "BD", 21 to "HD", 2 to "HD", 4 to "TD", 17 to "TD", 96 to "LD", 1 to "SD")
     val id_2_profile = mapOf("4k" to "4k", "BD" to "1080p", "TD" to "720p", "HD" to "540p", "SD" to "360p", "LD" to "210p")
 
 
-    fun download(url: String) {
+    override fun download(url: String) {
         val html = HttpRequest.get(url)
                 .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
                 .header("Accept-Charset", "UTF-8,*;q=0.5")
@@ -27,9 +29,9 @@ object Iqiyi {
                 .followRedirects(true)
                 .body()
 
-        val tvid = match1(url, "#curid=(.+)_") ?: match1(url, "tvid=([^&]+)") ?: match1(html, "data-player-tvid=\"([^\"]+)\"") ?: ""
-        val videoid = match1(url, "#curid=.+_(.*)$") ?: match1(url, "vid=([^&]+)") ?: match1(html, "data-player-videoid=\"([^\"]+)\"") ?: ""
-        val title = match1(html, "<title>([^<]+)")?.split('-')!![0]
+        val tvid = "#curid=(.+)_".match1(url) ?: "tvid=([^&]+)".match1(url) ?: "data-player-tvid=\"([^\"]+)\"".match1(html) ?: ""
+        val videoid = "#curid=.+_(.*)$".match1(url) ?: "vid=([^&]+)".match1(url) ?: "data-player-videoid=\"([^\"]+)\"".match1(html) ?: ""
+        val title = "<title>([^<]+)".match1(html)?.split('-')!![0]
 
         val info = getVMS(tvid, videoid)
 

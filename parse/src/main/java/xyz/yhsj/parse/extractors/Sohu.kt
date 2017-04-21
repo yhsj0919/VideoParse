@@ -1,23 +1,24 @@
 package xyz.yhsj.parse.extractors
 
+import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
+import xyz.yhsj.parse.match1
 import xyz.yhsj.parse.utils.HttpRequest
-import xyz.yshj.parse.match1
 import java.net.URL
 import java.util.*
 
 /**搜狐视频
  * Created by LOVE on 2017/4/19 019.
  */
-object Sohu {
-    fun download(url: String) {
+object Sohu : Parse {
+    override fun download(url: String) {
         var vid: String? = ""
         if ("http://share.vrs.sohu.com" in url) {
-            vid = match1(url, "id=(\\d+)")
+            vid = "id=(\\d+)".match1(url)
         } else {
             val html = HttpRequest.get(url).body()
 
-            vid = match1(html, "\\Wvid\\s*[\\:=]\\s*['\"]?(\\d+)['\"]?")
+            vid = "\\Wvid\\s*[\\:=]\\s*['\"]?(\\d+)['\"]?".match1(html)
         }
 
         if ("http://tv.sohu.com/" in url) {
