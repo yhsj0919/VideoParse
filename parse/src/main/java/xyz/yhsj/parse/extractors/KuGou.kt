@@ -47,7 +47,7 @@ object KuGou : Parse {
     /**
      * 下载单个歌曲
      */
-    private fun kugou_download_by_hash(title: String, hash_val: String) {
+    private fun kugou_download_by_hash(title: String? = null, hash_val: String) {
         val key = MD5.getMD5CodeStr("${hash_val}kgcloud")
         //{"status":0,
         // "error":"The Resource Needs to be Paid"}
@@ -71,7 +71,19 @@ object KuGou : Parse {
             println("出错啦:${obj.getString("error")}")
         } else {
 //            println("文件名:${obj.getString("fileName")}.${obj.getString("extName")}")
-            println("文件名:     $title.${obj.getString("extName")}")
+
+            val temptitle = obj.getString("fileName")
+            val real_title = if (title == null) {
+                temptitle
+            } else {
+                if (temptitle.length > title.length) {
+                    title
+                } else {
+                    temptitle
+                }
+            }
+
+            println("文件名:     $real_title.${obj.getString("extName")}")
             println("下载地址:   ${obj.getString("url")}")
         }
     }
@@ -111,21 +123,20 @@ object KuGou : Parse {
     override fun download(url: String) {
         //http://5sing.kugou.com/yc/3287805.html
         //http://www.kugou.com/song/#B274BD2549B723B966A52DBC5921AA7B
+//        http://www.kugou.com/song/#hash=2688ADB1CA449448388270987BDCE6E8&album_id=960327
         //http://www.kugou.com/yy/album/single/1776093.html
-        val kugouMatcher = Pattern.compile("http://www\\.kugou\\.com/song/#(.*?)").matcher(url)
-        val singMatcher = Pattern.compile("http://5sing\\.kugou\\.com/([a-zA-Z0-9]{1,4})/([a-zA-Z0-9]{1,10}).html").matcher(url)
-        try {
-            if (kugouMatcher.find()) {
-                val hash = url.split("#")[1].toLowerCase()
-                kugou_download_by_hash("未知歌名", hash)
-            } else if (singMatcher.find()) {
-                kugou_5sing(url)
-            } else {
-                download_playlist(url)
-            }
-        } catch (e: Exception) {
-            println("出错了:${e.message}")
+
+
+        if ("5sing" in url.toLowerCase()) {
+            kugou_5sing(url)
+        } else if ("http://www.kugou.com/song/" in url.toLowerCase()) {
+            val hash = "hash=([^&]+)".match1(url) ?: ""
+            kugou_download_by_hash(hash_val = hash)
+
+        } else {
+            download_playlist(url)
         }
+
     }
 
 

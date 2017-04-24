@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import xyz.yhsj.parse.extractors.KuGou
 import xyz.yhsj.parse.extractors.QQ
+import xyz.yhsj.parse.extractors.YouKu
 import xyz.yhsj.parse.runAsync
 
 class MainActivity : AppCompatActivity() {
@@ -32,7 +34,8 @@ class MainActivity : AppCompatActivity() {
 
                     when (netArray[i]) {
                         "酷狗" -> {
-                            //KuGou.download("http://www.kugou.com/yy/album/single/960327.html")
+//                            KuGou.download("http://www.kugou.com/song/#hash=2688ADB1CA449448388270987BDCE6E8&album_id=960327")
+                            KuGou.download("http://www.kugou.com/yy/album/single/960327.html")
                             //KuGou.download("http://www.kugou.com/yy/special/single/24745.html")
                         }
                         "网易云音乐" -> {
@@ -48,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                             //Netease.download("http://music.163.com/#/mv?id=420144")
                         }
                         "优酷" -> {
-                            //YouKu.download("http://v.youku.com/v_show/id_XODMxNzI4MjQ4.id_XODMxNzI4MjQ4html")
+                            YouKu.download("http://v.youku.com/v_show/id_XODMxNzI4MjQ4.id_XODMxNzI4MjQ4html")
                         }
 
                         "乐视" -> {
