@@ -24,5 +24,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compile project(':parse')
+    compile 'com.android.support:recyclerview-v7:25.3.1'
 }
 
