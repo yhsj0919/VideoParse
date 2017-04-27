@@ -1,6 +1,7 @@
 package xyz.yhsj.parse.extractors
 
 import org.json.JSONObject
+import xyz.yhsj.parse.entity.ParseResult
 import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
 import xyz.yhsj.parse.match1
@@ -20,7 +21,7 @@ object Iqiyi : Parse {
     val id_2_profile = mapOf("4k" to "4k", "BD" to "1080p", "TD" to "720p", "HD" to "540p", "SD" to "360p", "LD" to "210p")
 
 
-    override fun download(url: String) {
+    override fun download(url: String): ParseResult {
         val html = HttpRequest.get(url)
                 .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
                 .header("Accept-Charset", "UTF-8,*;q=0.5")
@@ -56,6 +57,7 @@ object Iqiyi : Parse {
         }
 
         println(streams)
+        return ParseResult()
     }
 
 

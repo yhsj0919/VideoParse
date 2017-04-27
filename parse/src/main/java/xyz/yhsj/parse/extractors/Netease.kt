@@ -2,6 +2,7 @@ package xyz.yhsj.parse.extractors
 
 
 import org.json.JSONObject
+import xyz.yhsj.parse.entity.ParseResult
 import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
 import xyz.yhsj.parse.match1
@@ -15,7 +16,7 @@ import kotlin.experimental.xor
  * Created by LOVE on 2017/3/1 001.
  */
 object Netease : Parse {
-    override fun download(url: String) {
+    override fun download(url: String): ParseResult {
         if ("163.fm" in url) {
         }
         if ("music.163.com" in url) {
@@ -23,6 +24,8 @@ object Netease : Parse {
         } else {
 
         }
+
+        return ParseResult()
     }
 
     /**

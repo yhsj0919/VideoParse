@@ -1,19 +1,24 @@
 package xyz.yhsj.video
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import xyz.yhsj.parse.extractors.KuGou
-import xyz.yhsj.parse.extractors.QQ
-import xyz.yhsj.parse.extractors.YouKu
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import xyz.yhsj.parse.extractors.*
+import xyz.yhsj.parse.match0
 import xyz.yhsj.parse.runAsync
+
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var recyclerView: RecyclerView
     lateinit var mainAdapter: MainAdapter
+    lateinit var et_url: EditText
+    lateinit var btn_parse: Button
 
     val netArray = arrayListOf("爱奇艺", "优酷", "酷狗", "乐视", "网易云音乐", "搜狐", "腾讯")
 
@@ -22,10 +27,23 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         recyclerView = findViewById(R.id.recyclerView) as RecyclerView
 
+        et_url = findViewById(R.id.et_url) as EditText
+        btn_parse = findViewById(R.id.btn_parse) as Button
+
+        et_url.setText(getUrl(getShare()))
+
+        btn_parse.setOnClickListener {
+
+            startActivity(Intent(this, VideoActivity::class.java))
+
+//            parseUrl(et_url.text.toString())
+        }
+
         recyclerView.layoutManager = GridLayoutManager(this, 4)
         mainAdapter = MainAdapter(recyclerView)
         recyclerView.adapter = mainAdapter
         mainAdapter.data = netArray
+
 
 
         mainAdapter.setOnItemClickListener { _, _, i ->
@@ -55,12 +73,13 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         "乐视" -> {
-                            //Letv.download("http://www.le.com/ptv/vplay/27085339.html?ref=100000001")
+                            Letv.download("http://www.le.com/ptv/vplay/27085339.html?ref=100000001")
                         }
                         "爱奇艺" -> {
+                            Iqiyi.download("http://www.iqiyi.com/v_19rrl9crao.html")
                         }
                         "搜狐" -> {
-                            //Sohu.download("http://my.tv.sohu.com/pl/9186474/88706000.shtml")
+                            Sohu.download("http://my.tv.sohu.com/pl/9186474/88706000.shtml")
                         }
                         "腾讯" -> {
 //                            QQ.download("https://v.qq.com/x/cover/kp4m5ys7tms73cd.html")
@@ -73,7 +92,56 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
 
+    fun parseUrl(url: String) {
+
+        if ("kugou.com" in url) {
+            Toast.makeText(this, "酷狗", Toast.LENGTH_SHORT).show()
+        } else if ("music.163.com" in url) {
+            Toast.makeText(this, "网易", Toast.LENGTH_SHORT).show()
+        } else if ("youku.com" in url) {
+            Toast.makeText(this, "优酷", Toast.LENGTH_SHORT).show()
+            runAsync {
+                YouKu.download(url)
+            }
+
+        } else if ("le.com" in url) {
+            Toast.makeText(this, "乐视", Toast.LENGTH_SHORT).show()
+        } else if ("iqiyi.com" in url) {
+            Toast.makeText(this, "爱奇艺", Toast.LENGTH_SHORT).show()
+            runAsync {
+                Iqiyi.download(url)
+            }
+        } else if ("sohu.com" in url) {
+            Toast.makeText(this, "搜狐", Toast.LENGTH_SHORT).show()
+        } else if ("qq.com" in url) {
+            Toast.makeText(this, "腾讯", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "暂不支持该网站", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    /**
+     * 获取url
+     */
+    fun getUrl(url: String): String {
+        val match = "(http://|ftp://|https://|www){0,1}[^\u4e00-\u9fa5\\s]*?\\.(com|net|cn|me|tw|fr)[^\u4e00-\u9fa5\\s]*"
+        return match.match0(url) ?: url
+    }
+
+    /**
+     * 获取分享内容
+     */
+    fun getShare(): String {
+        val intent = intent ?: return ""
+        val extras = intent.extras ?: return ""
+
+        if (intent.type == "text/plain") {
+            return extras.getString(Intent.EXTRA_TEXT)
+        } else {
+            return ""
+        }
     }
 }

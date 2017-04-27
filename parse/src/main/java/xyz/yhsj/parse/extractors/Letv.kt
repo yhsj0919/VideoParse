@@ -1,9 +1,12 @@
 package xyz.yhsj.parse.extractors
 
+import xyz.yhsj.parse.entity.ParseResult
+import xyz.yhsj.parse.getSDPath
 import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
 import xyz.yhsj.parse.match1
 import xyz.yhsj.parse.utils.HttpRequest
+import xyz.yhsj.parse.writeToFile
 import java.util.*
 
 /**乐视
@@ -11,7 +14,7 @@ import java.util.*
  */
 object Letv : Parse {
 
-    override fun download(url: String) {
+    override fun download(url: String) : ParseResult {
         val regex1 = "http://www.letv.com/ptv/vplay/(\\d+).html"
         val regex2 = "http://www.le.com/ptv/vplay/(\\d+).html"
         val regex3 = "vid=\"(\\d+)\""
@@ -19,6 +22,10 @@ object Letv : Parse {
         val vid = regex1.match1(url) ?: regex2.match1(url) ?: regex3.match1(url) ?: ""
 
         letv_download_by_vid(vid)
+
+
+        return ParseResult()
+
     }
 
     fun letv_download_by_vid(vid: String) {
@@ -41,7 +48,9 @@ object Letv : Parse {
 
         val video = resp.getJSONObject("playurl")
 
-        println(video.getString("title"))
+        val title = video.getString("title")
+
+        println(title)
 
         val dispatch = video.getJSONObject("dispatch")
 
@@ -77,7 +86,9 @@ object Letv : Parse {
 
         val m3u8_list = decode(m3u8)
 
-//        println(m3u8_list)
+        writeToFile(getSDPath() + "/$title.m3u8", m3u8_list, false)
+
+        //println(m3u8_list)
         println("解析地址")
         val videos = "http.*".toRegex().findAll(m3u8_list).toList()
 

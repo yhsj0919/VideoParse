@@ -1,5 +1,6 @@
 package xyz.yhsj.parse.extractors
 
+import xyz.yhsj.parse.entity.ParseResult
 import xyz.yhsj.parse.intfc.Parse
 
 /**56
@@ -7,7 +8,9 @@ import xyz.yhsj.parse.intfc.Parse
  */
 object V56 : Parse {
 
-    override fun download(url: String) {
+    override fun download(url: String) : ParseResult {
+
+        return ParseResult()
 
     }
 

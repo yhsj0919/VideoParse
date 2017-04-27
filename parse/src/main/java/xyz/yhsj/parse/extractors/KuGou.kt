@@ -1,6 +1,7 @@
 package xyz.yhsj.parse.extractors
 
 import org.json.JSONObject
+import xyz.yhsj.parse.entity.ParseResult
 import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.utils.HttpRequest
 import xyz.yhsj.parse.jsonObject
@@ -120,7 +121,7 @@ object KuGou : Parse {
 
     }
 
-    override fun download(url: String) {
+    override fun download(url: String): ParseResult {
         //http://5sing.kugou.com/yc/3287805.html
         //http://www.kugou.com/song/#B274BD2549B723B966A52DBC5921AA7B
 //        http://www.kugou.com/song/#hash=2688ADB1CA449448388270987BDCE6E8&album_id=960327
@@ -137,6 +138,7 @@ object KuGou : Parse {
             download_playlist(url)
         }
 
+        return ParseResult()
     }
 
 

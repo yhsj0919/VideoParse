@@ -1,5 +1,6 @@
 package xyz.yhsj.parse.extractors
 
+import xyz.yhsj.parse.entity.ParseResult
 import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
 import xyz.yhsj.parse.match1
@@ -11,7 +12,7 @@ import java.util.*
  * Created by LOVE on 2017/4/19 019.
  */
 object Sohu : Parse {
-    override fun download(url: String) {
+    override fun download(url: String): ParseResult {
         var vid: String? = ""
         if ("http://share.vrs.sohu.com" in url) {
             vid = "id=(\\d+)".match1(url)
@@ -104,6 +105,8 @@ object Sohu : Parse {
                 urls.add(real_url(host, vid!!, tvid, su, clipURL, ck))
             }
         }
+
+        return  ParseResult()
     }
 
     /**

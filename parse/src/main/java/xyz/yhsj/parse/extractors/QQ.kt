@@ -1,6 +1,7 @@
 package xyz.yhsj.parse.extractors
 
 import org.json.JSONArray
+import xyz.yhsj.parse.entity.ParseResult
 import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
 import xyz.yhsj.parse.match1
@@ -11,7 +12,7 @@ import xyz.yhsj.parse.utils.HttpRequest
  * Created by LOVE on 2017/4/21 021.
  */
 object QQ : Parse {
-    override fun download(tempurl: String) {
+    override fun download(tempurl: String): ParseResult {
 
         var url = tempurl
 
@@ -21,12 +22,12 @@ object QQ : Parse {
             val shareid = chars[chars.lastIndex]
 
             kg_qq_download_by_shareid(shareid)
-            return
+            return ParseResult()
         }
 
         if ("live.qq.com" in url) {
             //TODO企鹅直播
-            return
+            return ParseResult()
         }
 
         if ("mp.weixin.qq.com/s" in url) {
@@ -36,7 +37,7 @@ object QQ : Parse {
             for (vid in vids) {
                 qq_download_by_vid(vid)
             }
-            return
+            return ParseResult()
         }
 
         if ("v.qq.com/page" in url) {
@@ -60,6 +61,8 @@ object QQ : Parse {
             val vid2 = "vid\"*\\s*:\\s*\"\\s*([^\"]+)\"".match1(content)
             qq_download_by_vid(vid ?: vid2 ?: "")
         }
+
+        return ParseResult()
     }
 
     /**

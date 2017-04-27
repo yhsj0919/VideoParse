@@ -1,5 +1,6 @@
 package xyz.yhsj.parse.extractors
 
+import xyz.yhsj.parse.entity.ParseResult
 import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
 import xyz.yhsj.parse.match1
@@ -16,8 +17,10 @@ object YouKu : Parse {
     val template1 = "becaf9be"
     val template2 = "bf7e5f01"
 
-    override fun download(url: String) {
+    override fun download(url: String): ParseResult {
         getdata(get_vid_from_url(url))
+
+        return ParseResult()
     }
 
     /**
@@ -38,6 +41,9 @@ object YouKu : Parse {
      * 获取下载地址
      */
     fun getdata(vid: String) {
+
+        println(vid)
+
         val url10 = "http://play.youku.com/play/get.json?ct=10&vid=$vid"
         val url12 = "http://play.youku.com/play/get.json?ct=12&vid=$vid"
 
