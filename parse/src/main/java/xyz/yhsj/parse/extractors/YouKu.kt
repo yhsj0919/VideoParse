@@ -1,7 +1,10 @@
 package xyz.yhsj.parse.extractors
 
+import xyz.yhsj.parse.entity.MediaFile
+import xyz.yhsj.parse.entity.MediaUrl
 import xyz.yhsj.parse.entity.ParseResult
 import xyz.yhsj.parse.intfc.Parse
+import xyz.yhsj.parse.jsonArray
 import xyz.yhsj.parse.jsonObject
 import xyz.yhsj.parse.match1
 import xyz.yhsj.parse.utils.Base64
@@ -18,9 +21,12 @@ object YouKu : Parse {
     val template2 = "bf7e5f01"
 
     override fun download(url: String): ParseResult {
-        getdata(get_vid_from_url(url))
+        try {
+            return getdata(get_vid_from_url(url))
+        } catch (e: Exception) {
+            return ParseResult(code = 500, msg = e.message ?: "")
+        }
 
-        return ParseResult()
     }
 
     /**
@@ -40,9 +46,7 @@ object YouKu : Parse {
     /**
      * 获取下载地址
      */
-    fun getdata(vid: String) {
-
-        println(vid)
+    fun getdata(vid: String): ParseResult {
 
         val url10 = "http://play.youku.com/play/get.json?ct=10&vid=$vid"
         val url12 = "http://play.youku.com/play/get.json?ct=12&vid=$vid"
@@ -50,8 +54,7 @@ object YouKu : Parse {
         val resp12 = HttpRequest.get(url12).header("Referer", "http://static.youku.com/").header("Cookie", "__ysuid={}").body().jsonObject
 
         if (!resp12.isNull("error")) {
-            println(resp12.getJSONObject("error").getString("note"))
-            return
+            return ParseResult(code = 500, msg = resp12.getJSONObject("error").getString("note"))
         }
 
         val resp10 = HttpRequest.get(url10).header("Referer", "http://static.youku.com/").header("Cookie", "__ysuid={}").body().jsonObject
@@ -65,13 +68,20 @@ object YouKu : Parse {
         val mToken = sidAndToken[1]
         val mOip = security.getString("ip")
 
+        val mediaFile = MediaFile()
+
+        val video = resp10.getJSONObject("data").getJSONObject("video")
+        mediaFile.title = video.getString("title")
+
         val streams = resp10.getJSONObject("data").getJSONArray("stream")
 
         for (i in 0..streams.length() - 1) {
 
+            val mediaUrl = MediaUrl()
+
             val stream_type = getStreamType(streams.getJSONObject(i).getString("stream_type"))
 
-            println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>${stream_type["msg"]}>>>>>>>>>>>>>>>>>>>>>>>>>.")
+            mediaUrl.stream_type = stream_type["msg"]
 
             val segs = streams.getJSONObject(i).getJSONArray("segs")
 
@@ -84,12 +94,16 @@ object YouKu : Parse {
                 //下载地址,还得解析一次
                 val videoUrl = "http://k.youku.com/player/getFlvPath/sid/${mSid}_00/st/${stream_type["type"]}/fileid/$fileId?ctype=12&ep=$ep&ev=1&oip=$mOip&token=$mToken&yxon=1&K=$key"
 
-                println(videoUrl)
+                val realUrl = HttpRequest.get(videoUrl).body().jsonArray
+
+                mediaUrl.downUrl.add(realUrl.getJSONObject(0).getString("server"))
+                mediaUrl.playUrl.add(realUrl.getJSONObject(0).getString("server"))
             }
 
-            println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+            mediaFile.url.add(mediaUrl)
         }
 
+        return ParseResult(data = mediaFile)
     }
 
 

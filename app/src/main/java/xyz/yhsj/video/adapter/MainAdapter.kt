@@ -1,8 +1,9 @@
-package xyz.yhsj.video
+package xyz.yhsj.video.adapter
 
 import android.support.v7.widget.RecyclerView
 import xyz.yhsj.adapter.BaseRecyclerViewAdapter
 import xyz.yhsj.helper.ViewHolderHelper
+import xyz.yhsj.video.R
 
 /**
  * Created by LOVE on 2017/4/24 024.

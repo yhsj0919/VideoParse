@@ -1,4 +1,4 @@
-package xyz.yhsj.video;
+package xyz.yhsj.video.listener;
 
 import com.shuyu.gsyvideoplayer.listener.StandardVideoAllCallBack;
 

@@ -1,4 +1,4 @@
-package xyz.yhsj.video
+package xyz.yhsj.video.parse
 
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -11,6 +11,9 @@ import com.shuyu.gsyvideoplayer.utils.GSYVideoType
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.shuyu.gsyvideoplayer.video.ListGSYVideoPlayer
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
+import xyz.yhsj.parse.entity.MediaFile
+import xyz.yhsj.video.R
+import xyz.yhsj.video.listener.SampleListener
 import java.util.ArrayList
 
 class VideoActivity : AppCompatActivity() {
@@ -20,19 +23,38 @@ class VideoActivity : AppCompatActivity() {
     private var isPlay: Boolean = false
     private var isPause: Boolean = false
 
+    private var mediaFile: MediaFile? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
 
         player = findViewById(R.id.player) as ListGSYVideoPlayer
 
+
+        mediaFile = intent.getSerializableExtra("video") as MediaFile?
+
+
         GSYVideoManager.instance().setVideoType(this, GSYVideoType.IJKEXOPLAYER)
 
-        val videos = ArrayList<GSYVideoModel>()
-        videos.add(GSYVideoModel("https://uniauto.oss-cn-qingdao.aliyuncs.com/video/20170320/2017032004303782346910751.mp4", "测试视频"))
 
-        player.setUp(videos, false, 0, "标题")
+        if (mediaFile != null) {
+            val videos = ArrayList<GSYVideoModel>()
 
+            val playUrl = mediaFile!!.url[0]
+
+            for (url in playUrl.playUrl) {
+                videos.add(GSYVideoModel(url, mediaFile!!.title + "-" + playUrl.stream_type))
+            }
+            player.setUp(videos, false, 0)
+        }
+
+        initPlayer()
+
+    }
+
+
+    fun initPlayer() {
         //外部辅助的旋转，帮助全屏
         orientationUtils = OrientationUtils(this, player)
         //初始化不打开外部的旋转
@@ -86,7 +108,6 @@ class VideoActivity : AppCompatActivity() {
             orientationUtils.isEnable = !lock
 
         })
-
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

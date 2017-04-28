@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Video</string>
+    <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>

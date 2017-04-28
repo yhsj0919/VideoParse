@@ -11,6 +11,8 @@ import android.widget.Toast
 import xyz.yhsj.parse.extractors.*
 import xyz.yhsj.parse.match0
 import xyz.yhsj.parse.runAsync
+import xyz.yhsj.video.adapter.MainAdapter
+import xyz.yhsj.video.parse.VideoActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -36,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
             startActivity(Intent(this, VideoActivity::class.java))
 
-//            parseUrl(et_url.text.toString())
+            parseUrl(et_url.text.toString())
         }
 
         recyclerView.layoutManager = GridLayoutManager(this, 4)
@@ -69,14 +71,30 @@ class MainActivity : AppCompatActivity() {
                             //Netease.download("http://music.163.com/#/mv?id=420144")
                         }
                         "优酷" -> {
-                            YouKu.download("http://v.youku.com/v_show/id_XODMxNzI4MjQ4.id_XODMxNzI4MjQ4html")
+                            val result = YouKu.download("http://v.youku.com/v_show/id_XODMxNzI4MjQ4.id_XODMxNzI4MjQ4html")
+                            if (result.code == 200) {
+                                println(result.data?.title)
+
+                            } else {
+                                println(result.msg)
+                            }
+
                         }
 
                         "乐视" -> {
                             Letv.download("http://www.le.com/ptv/vplay/27085339.html?ref=100000001")
                         }
                         "爱奇艺" -> {
-                            Iqiyi.download("http://www.iqiyi.com/v_19rrl9crao.html")
+                            val result = Iqiyi.download("http://www.iqiyi.com/v_19rrl9crao.html")
+                            runOnUiThread {
+                                if (result.code == 200) {
+                                    println(result.data?.title)
+                                    startActivity(Intent(this, VideoActivity::class.java).putExtra("video", result.data))
+                                } else {
+                                    Toast.makeText(this, "解析失败,请稍后重试", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
                         }
                         "搜狐" -> {
                             Sohu.download("http://my.tv.sohu.com/pl/9186474/88706000.shtml")
@@ -112,7 +130,15 @@ class MainActivity : AppCompatActivity() {
         } else if ("iqiyi.com" in url) {
             Toast.makeText(this, "爱奇艺", Toast.LENGTH_SHORT).show()
             runAsync {
-                Iqiyi.download(url)
+                val result = Iqiyi.download(url)
+                runOnUiThread {
+                    if (result.code == 200) {
+                        println(result.data?.title)
+                        startActivity(Intent(this, VideoActivity::class.java).putExtra("video", result.data))
+                    } else {
+                        Toast.makeText(this, "解析失败,请稍后重试", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         } else if ("sohu.com" in url) {
             Toast.makeText(this, "搜狐", Toast.LENGTH_SHORT).show()

@@ -1,6 +1,8 @@
 package xyz.yhsj.parse.extractors
 
 import org.json.JSONObject
+import xyz.yhsj.parse.entity.MediaFile
+import xyz.yhsj.parse.entity.MediaUrl
 import xyz.yhsj.parse.entity.ParseResult
 import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
@@ -22,6 +24,14 @@ object Iqiyi : Parse {
 
 
     override fun download(url: String): ParseResult {
+        try {
+            return getData(url)
+        } catch (e: Exception) {
+            return ParseResult(code = 500, msg = e.message ?: "")
+        }
+    }
+
+    fun getData(url: String): ParseResult {
         val html = HttpRequest.get(url)
                 .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
                 .header("Accept-Charset", "UTF-8,*;q=0.5")
@@ -34,6 +44,9 @@ object Iqiyi : Parse {
         val videoid = "#curid=.+_(.*)$".match1(url) ?: "vid=([^&]+)".match1(url) ?: "data-player-videoid=\"([^\"]+)\"".match1(html) ?: ""
         val title = "<title>([^<]+)".match1(html)?.split('-')!![0]
 
+        val mediaFile = MediaFile()
+        mediaFile.title = title
+
         val info = getVMS(tvid, videoid)
 
         val vidl = info.getJSONObject("data").getJSONArray("vidl")
@@ -44,6 +57,8 @@ object Iqiyi : Parse {
         val streams = HashMap<String, Map<String, String>>()
 
         for (i in 0..vidl.length() - 1) {
+            val mediaUrl = MediaUrl()
+
             val stream = vidl.getJSONObject(i)
 
             val stream_id = vd_2_id[stream.getInt("vd")] ?: continue
@@ -54,10 +69,15 @@ object Iqiyi : Parse {
 
             streams[stream_id] = mapOf("video_profile" to stream_profile, "container" to "m3u8", "src" to stream.getString("m3u"))
 
+            mediaUrl.stream_type = stream_profile
+            mediaUrl.playUrl.add(stream.getString("m3u"))
+            mediaUrl.downUrl.add(stream.getString("m3u"))
+
+            mediaFile.url.add(mediaUrl)
+
         }
 
-        println(streams)
-        return ParseResult()
+        return ParseResult(data = mediaFile)
     }
 
 

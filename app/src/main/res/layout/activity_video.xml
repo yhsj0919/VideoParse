@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="xyz.yhsj.video.VideoActivity">
+    tools:context="xyz.yhsj.video.parse.VideoActivity">
 
     <com.shuyu.gsyvideoplayer.video.ListGSYVideoPlayer
         android:id="@+id/player"
