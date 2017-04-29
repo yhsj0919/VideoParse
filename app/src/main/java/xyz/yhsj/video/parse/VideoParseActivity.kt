@@ -33,10 +33,7 @@ class VideoParseActivity : BaseActivity() {
         htmlUrl = getShare()
         fab.setOnClickListener {
 
-            runAsync {
-                parseUrl(htmlUrl ?: "")
-            }
-
+            parseUrl(htmlUrl ?: "")
 
         }
 
@@ -79,7 +76,18 @@ class VideoParseActivity : BaseActivity() {
             Toast.makeText(this, "乐视", Toast.LENGTH_SHORT).show()
         } else if ("iqiyi.com" in url) {
             Toast.makeText(this, "爱奇艺", Toast.LENGTH_SHORT).show()
-            Iqiyi.download(url)
+            runAsync {
+                val result = Iqiyi.download(url)
+                runOnUiThread {
+                    if (result.code == 200) {
+                        println(result.data?.title)
+                        startActivity(Intent(this, VideoActivity::class.java).putExtra("video", result.data))
+                    } else {
+                        Toast.makeText(this, "解析失败,请稍后重试", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
         } else if ("sohu.com" in url) {
             Toast.makeText(this, "搜狐", Toast.LENGTH_SHORT).show()
         } else if ("qq.com" in url) {
@@ -98,8 +106,8 @@ class VideoParseActivity : BaseActivity() {
         val intent = intent ?: return ""
         val extras = intent.extras ?: return ""
 
-        if (intent.type == "text/plain") {
-            return getUrl(extras.getString(Intent.EXTRA_TEXT))
+        if (intent.type == "text/plain" || intent.type == "image/jpeg" || intent.type == "image/png") {
+            return getUrl(extras.getString(Intent.EXTRA_TEXT) ?: "")
         } else {
             return ""
         }

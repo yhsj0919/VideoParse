@@ -35,9 +35,6 @@ class MainActivity : AppCompatActivity() {
         et_url.setText(getUrl(getShare()))
 
         btn_parse.setOnClickListener {
-
-            startActivity(Intent(this, VideoActivity::class.java))
-
             parseUrl(et_url.text.toString())
         }
 
@@ -45,9 +42,6 @@ class MainActivity : AppCompatActivity() {
         mainAdapter = MainAdapter(recyclerView)
         recyclerView.adapter = mainAdapter
         mainAdapter.data = netArray
-
-
-
         mainAdapter.setOnItemClickListener { _, _, i ->
             runAsync {
                 try {

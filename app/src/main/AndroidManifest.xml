@@ -41,13 +41,14 @@
 
                 <data android:mimeType="text/plain" />
 
-                <data android:mimeType="image/jpeg"/>
+                <data android:mimeType="image/jpeg" />
+
+                <data android:mimeType="image/png" />
                 <!--
-              <data android:mimeType="image/png"/>
-              <data android:mimeType="application/zip"/>
-              <data android:mimeType="application/rar"/>
-              <data android:mimeType="audio/amr"/>
-              -->
+             <data android:mimeType="application/zip"/>
+             <data android:mimeType="application/rar"/>
+             <data android:mimeType="audio/amr"/>
+             -->
             </intent-filter>
         </activity>
     </application>
