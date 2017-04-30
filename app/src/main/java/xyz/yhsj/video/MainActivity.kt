@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                             runOnUiThread {
                                 if (result.code == 200) {
                                     println(result.data?.title)
-                                    startActivity(Intent(this, VideoActivity::class.java).putExtra("video", result.data))
+                                    startActivity(Intent(this, VideoActivity::class.java).putExtra("video", result.data?.url!![0]))
                                 } else {
                                     Toast.makeText(this, "解析失败,请稍后重试", Toast.LENGTH_SHORT).show()
                                 }

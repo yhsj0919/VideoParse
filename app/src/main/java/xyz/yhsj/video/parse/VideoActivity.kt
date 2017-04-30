@@ -12,6 +12,7 @@ import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.shuyu.gsyvideoplayer.video.ListGSYVideoPlayer
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 import xyz.yhsj.parse.entity.MediaFile
+import xyz.yhsj.parse.entity.MediaUrl
 import xyz.yhsj.video.R
 import xyz.yhsj.video.listener.SampleListener
 import java.util.ArrayList
@@ -23,7 +24,7 @@ class VideoActivity : AppCompatActivity() {
     private var isPlay: Boolean = false
     private var isPause: Boolean = false
 
-    private var mediaFile: MediaFile? = null
+    private var mediaUrl: MediaUrl? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,19 +33,19 @@ class VideoActivity : AppCompatActivity() {
         player = findViewById(R.id.player) as ListGSYVideoPlayer
 
 
-        mediaFile = intent.getSerializableExtra("video") as MediaFile?
+        mediaUrl = intent.getSerializableExtra("video") as MediaUrl?
 
 
         GSYVideoManager.instance().setVideoType(this, GSYVideoType.IJKEXOPLAYER)
 
 
-        if (mediaFile != null) {
+        if (mediaUrl != null) {
             val videos = ArrayList<GSYVideoModel>()
 
-            val playUrl = mediaFile!!.url[0]
+            val playUrl = mediaUrl!!.playUrl
 
-            for (url in playUrl.playUrl) {
-                videos.add(GSYVideoModel(url, mediaFile!!.title + "-" + playUrl.stream_type))
+            for (url in playUrl) {
+                videos.add(GSYVideoModel(url, mediaUrl!!.title + "-" + mediaUrl!!.stream_type))
             }
             player.setUp(videos, false, 0)
         }

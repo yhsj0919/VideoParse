@@ -40,13 +40,15 @@ object YouKu : Parse {
         val regex2 = "player\\.youku\\.com/player\\.php/sid/([a-zA-Z0-9=]+)/v\\.swf"
         val regex3 = "loader\\.swf\\?VideoIDS=([a-zA-Z0-9=]+)"
         val regex4 = "player\\.youku\\.com/embed/([a-zA-Z0-9=]+)"
-        return regex1.match1(url) ?: regex2.match1(url) ?: regex3.match1(url) ?: regex4.match1(url) ?: ""
+        val regex5 = "id_([a-zA-Z0-9=]+)"
+        return regex1.match1(url) ?: regex2.match1(url) ?: regex3.match1(url) ?: regex4.match1(url) ?:regex5.match1(url)?: ""
     }
 
     /**
      * 获取下载地址
      */
     fun getdata(vid: String): ParseResult {
+        println(vid)
 
         val url10 = "http://play.youku.com/play/get.json?ct=10&vid=$vid"
         val url12 = "http://play.youku.com/play/get.json?ct=12&vid=$vid"
@@ -58,6 +60,8 @@ object YouKu : Parse {
         }
 
         val resp10 = HttpRequest.get(url10).header("Referer", "http://static.youku.com/").header("Cookie", "__ysuid={}").body().jsonObject
+
+        println(resp12)
 
         val security = resp12.getJSONObject("data").getJSONObject("security")
         val strEncrypt = security.getString("encrypt_string")
@@ -71,13 +75,14 @@ object YouKu : Parse {
         val mediaFile = MediaFile()
 
         val video = resp10.getJSONObject("data").getJSONObject("video")
-        mediaFile.title = video.getString("title")
+        val title=video.getString("title")
+        mediaFile.title = title
 
         val streams = resp10.getJSONObject("data").getJSONArray("stream")
 
         for (i in 0..streams.length() - 1) {
 
-            val mediaUrl = MediaUrl()
+            val mediaUrl = MediaUrl(title)
 
             val stream_type = getStreamType(streams.getJSONObject(i).getString("stream_type"))
 

@@ -57,7 +57,7 @@ object Iqiyi : Parse {
         val streams = HashMap<String, Map<String, String>>()
 
         for (i in 0..vidl.length() - 1) {
-            val mediaUrl = MediaUrl()
+            val mediaUrl = MediaUrl(title)
 
             val stream = vidl.getJSONObject(i)
 

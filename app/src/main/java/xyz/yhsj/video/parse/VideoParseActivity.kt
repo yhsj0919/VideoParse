@@ -2,25 +2,31 @@ package xyz.yhsj.video.parse
 
 import android.content.Intent
 import android.net.Uri
+import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.FloatingActionButton
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.widget.Toast
 import kotterknife.bindView
+import xyz.yhsj.parse.entity.ParseResult
 import xyz.yhsj.video.BaseActivity
 import xyz.yhsj.parse.extractors.Iqiyi
 import xyz.yhsj.parse.extractors.YouKu
 import xyz.yhsj.parse.match0
 import xyz.yhsj.parse.runAsync
 import xyz.yhsj.video.R
+import xyz.yhsj.video.adapter.VideoStreamAdapter
 
 class VideoParseActivity : BaseActivity() {
     val recyclerView by bindView<RecyclerView>(R.id.recyclerView)
     val toolbar by bindView<Toolbar>(R.id.toolbar)
+    val toolbarLayout by bindView<CollapsingToolbarLayout>(R.id.toolbar_layout)
     val fab by bindView<FloatingActionButton>(R.id.fab)
 
     var htmlUrl: String? = null
+    lateinit var streamAdapter: VideoStreamAdapter
 
 
     override fun getLayoutId(): Int = R.layout.activity_video_parse
@@ -30,6 +36,19 @@ class VideoParseActivity : BaseActivity() {
     override fun getMenuLayout(): Int = R.menu.menu_parse
 
     override fun init() {
+        streamAdapter = VideoStreamAdapter(recyclerView)
+        val linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        recyclerView.layoutManager = linearLayoutManager
+        recyclerView.adapter = streamAdapter
+
+        streamAdapter.setOnItemClickListener { viewGroup, view, i ->
+
+            startActivity(Intent(this, VideoActivity::class.java).putExtra("video", streamAdapter.data[i]))
+        }
+
+
+
         htmlUrl = getShare()
         fab.setOnClickListener {
 
@@ -68,24 +87,26 @@ class VideoParseActivity : BaseActivity() {
         } else if ("music.163.com" in url) {
             Toast.makeText(this, "网易", Toast.LENGTH_SHORT).show()
         } else if ("youku.com" in url) {
-            Toast.makeText(this, "优酷", Toast.LENGTH_SHORT).show()
+            toolbarLayout.title = "优酷"
+            runAsync {
+                val result = YouKu.download(url)
+                runOnUiThread {
+                    setResult(result)
+                }
+            }
             runAsync {
                 YouKu.download(url)
             }
         } else if ("le.com" in url) {
             Toast.makeText(this, "乐视", Toast.LENGTH_SHORT).show()
         } else if ("iqiyi.com" in url) {
-            Toast.makeText(this, "爱奇艺", Toast.LENGTH_SHORT).show()
+            toolbarLayout.title = "爱奇艺"
             runAsync {
                 val result = Iqiyi.download(url)
                 runOnUiThread {
-                    if (result.code == 200) {
-                        println(result.data?.title)
-                        startActivity(Intent(this, VideoActivity::class.java).putExtra("video", result.data))
-                    } else {
-                        Toast.makeText(this, "解析失败,请稍后重试", Toast.LENGTH_SHORT).show()
-                    }
+                    setResult(result)
                 }
+
             }
 
         } else if ("sohu.com" in url) {
@@ -98,6 +119,20 @@ class VideoParseActivity : BaseActivity() {
         }
     }
 
+    /**
+     * 显示数据
+     */
+    fun setResult(result: ParseResult) {
+
+        if (result.code == 200) {
+            toolbarLayout.title = result.data?.title
+            streamAdapter.data = result.data?.url
+        } else {
+            println(result.msg)
+            Toast.makeText(this, "解析失败,请稍后重试", Toast.LENGTH_SHORT).show()
+        }
+
+    }
 
     /**
      * 获取分享内容
