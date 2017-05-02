@@ -13,6 +13,7 @@ import kotterknife.bindView
 import xyz.yhsj.parse.entity.ParseResult
 import xyz.yhsj.video.BaseActivity
 import xyz.yhsj.parse.extractors.Iqiyi
+import xyz.yhsj.parse.extractors.Letv
 import xyz.yhsj.parse.extractors.YouKu
 import xyz.yhsj.parse.match0
 import xyz.yhsj.parse.runAsync
@@ -98,7 +99,13 @@ class VideoParseActivity : BaseActivity() {
                 YouKu.download(url)
             }
         } else if ("le.com" in url) {
-            Toast.makeText(this, "乐视", Toast.LENGTH_SHORT).show()
+            toolbarLayout.title = "乐视"
+            runAsync {
+                val result = Letv.download(url)
+                runOnUiThread {
+                    setResult(result)
+                }
+            }
         } else if ("iqiyi.com" in url) {
             toolbarLayout.title = "爱奇艺"
             runAsync {

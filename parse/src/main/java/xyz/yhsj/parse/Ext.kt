@@ -50,12 +50,12 @@ fun String.matchAll(text: String): List<String> {
  * 获取sd卡路径
  */
 fun getSDPath(): String {
-    var sdDir: File? = null
+
     val sdCardExist = Environment.getExternalStorageState() == android.os.Environment.MEDIA_MOUNTED//判断sd卡是否存在
     if (sdCardExist) {
-        sdDir = Environment.getExternalStorageDirectory()//获取跟目录
+        return Environment.getExternalStorageDirectory().absolutePath//获取跟目录
     }
-    return sdDir.toString()
+    return ""
 }
 
 /**
@@ -68,11 +68,15 @@ fun getSDPath(): String {
  * *
  * @param append   是否追加
  */
-fun writeToFile(filePath: String, content: String, append: Boolean): String {
+fun writeToFile(filePath: String, fileName: String, content: String, append: Boolean): String {
+
+    val file = File(filePath)
+    if (!file.exists()) {
+        file.mkdirs()
+    }
     var bufw: BufferedWriter? = null
     try {
-        bufw = BufferedWriter(OutputStreamWriter(
-                FileOutputStream(filePath, append)))
+        bufw = BufferedWriter(OutputStreamWriter(FileOutputStream(filePath + fileName, append)))
         bufw.write(content)
     } catch (e1: Exception) {
         e1.printStackTrace()
@@ -85,7 +89,7 @@ fun writeToFile(filePath: String, content: String, append: Boolean): String {
             }
         }
     }
-    return filePath
+    return filePath + fileName
 }
 
 
