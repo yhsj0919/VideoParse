@@ -18,7 +18,13 @@ object Letv : Parse {
 
     override fun download(url: String): ParseResult {
         try {
-            return letv_download_by_vid(getId(url))
+
+            val vid = getId(url)
+            if (vid.isNullOrBlank()) {
+                return ParseResult(code = 500, msg = "获取视频id失败")
+            }
+
+            return letv_download_by_vid(vid)
         } catch (e: Exception) {
             return ParseResult(code = 500, msg = e.message ?: "")
         }
@@ -60,8 +66,6 @@ object Letv : Parse {
 
         for (key in vkey) {
 
-            println(key)
-
             val mediaUrl = MediaUrl(title)
 
             val m3u8Url = video.getJSONArray("domain").getString(0) + dispatch.getJSONArray(key).getString(0) + "&ctv=pc&m3v=1&termid=1&format=1&hwtype=un&ostype=Linux&tag=letv&sign=letv&expect=3&tn=${Math.random()}&pay=0&iscpn=f9051&rateid=$key"
@@ -81,8 +85,6 @@ object Letv : Parse {
             val m3u8_list = decode(m3u8)
 
             val filePath = writeToFile(getSDPath() + "/VideoParse/", "$title-$key.m3u8", m3u8_list, false)
-
-            println(">>>>>>>>>>>>>>>>>>>" + filePath)
 
             mediaUrl.stream_type = key
             mediaUrl.playUrl.add(filePath)

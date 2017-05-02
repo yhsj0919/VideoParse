@@ -19,6 +19,13 @@ import xyz.yhsj.parse.match0
 import xyz.yhsj.parse.runAsync
 import xyz.yhsj.video.R
 import xyz.yhsj.video.adapter.VideoStreamAdapter
+import android.text.Spannable
+import android.text.style.ImageSpan
+import android.graphics.BitmapFactory
+import android.graphics.Bitmap
+import android.text.SpannableStringBuilder
+import android.widget.TextView
+
 
 class VideoParseActivity : BaseActivity() {
     val recyclerView by bindView<RecyclerView>(R.id.recyclerView)
@@ -148,11 +155,8 @@ class VideoParseActivity : BaseActivity() {
         val intent = intent ?: return ""
         val extras = intent.extras ?: return ""
 
-        if (intent.type == "text/plain" || intent.type == "image/jpeg" || intent.type == "image/png") {
-            return getUrl(extras.getString(Intent.EXTRA_TEXT) ?: "")
-        } else {
-            return ""
-        }
+        return getUrl(extras.getString(Intent.EXTRA_TEXT) ?: "")
+
     }
 
     /**

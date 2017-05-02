@@ -22,7 +22,13 @@ object YouKu : Parse {
 
     override fun download(url: String): ParseResult {
         try {
-            return getdata(get_vid_from_url(url))
+
+            val vid = get_vid_from_url(url)
+            if (vid.isNullOrBlank()) {
+                return ParseResult(code = 500, msg = "获取视频id失败")
+            }
+
+            return getdata(vid)
         } catch (e: Exception) {
             return ParseResult(code = 500, msg = e.message ?: "")
         }
@@ -41,15 +47,13 @@ object YouKu : Parse {
         val regex3 = "loader\\.swf\\?VideoIDS=([a-zA-Z0-9=]+)"
         val regex4 = "player\\.youku\\.com/embed/([a-zA-Z0-9=]+)"
         val regex5 = "id_([a-zA-Z0-9=]+)"
-        return regex1.match1(url) ?: regex2.match1(url) ?: regex3.match1(url) ?: regex4.match1(url) ?:regex5.match1(url)?: ""
+        return regex1.match1(url) ?: regex2.match1(url) ?: regex3.match1(url) ?: regex4.match1(url) ?: regex5.match1(url) ?: ""
     }
 
     /**
      * 获取下载地址
      */
     fun getdata(vid: String): ParseResult {
-        println(vid)
-
         val url10 = "http://play.youku.com/play/get.json?ct=10&vid=$vid"
         val url12 = "http://play.youku.com/play/get.json?ct=12&vid=$vid"
 
@@ -60,8 +64,6 @@ object YouKu : Parse {
         }
 
         val resp10 = HttpRequest.get(url10).header("Referer", "http://static.youku.com/").header("Cookie", "__ysuid={}").body().jsonObject
-
-        println(resp12)
 
         val security = resp12.getJSONObject("data").getJSONObject("security")
         val strEncrypt = security.getString("encrypt_string")
@@ -75,7 +77,7 @@ object YouKu : Parse {
         val mediaFile = MediaFile()
 
         val video = resp10.getJSONObject("data").getJSONObject("video")
-        val title=video.getString("title")
+        val title = video.getString("title")
         mediaFile.title = title
 
         val streams = resp10.getJSONObject("data").getJSONArray("stream")
