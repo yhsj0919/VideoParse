@@ -12,8 +12,14 @@ import xyz.yhsj.parse.utils.HttpRequest
  * Created by LOVE on 2017/4/21 021.
  */
 object QQ : Parse {
-    override fun download(tempurl: String): ParseResult {
+    override fun download(url: String): ParseResult {
 
+        downloadByiteSite(url)
+
+        return ParseResult()
+    }
+
+    fun downloadByiteSite(tempurl: String): ParseResult {
         var url = tempurl
 
         //全民k歌
@@ -61,7 +67,6 @@ object QQ : Parse {
             val vid2 = "vid\"*\\s*:\\s*\"\\s*([^\"]+)\"".match1(content)
             qq_download_by_vid(vid ?: vid2 ?: "")
         }
-
         return ParseResult()
     }
 

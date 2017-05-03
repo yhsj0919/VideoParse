@@ -1,5 +1,7 @@
 package xyz.yhsj.parse.extractors
 
+import xyz.yhsj.parse.entity.MediaFile
+import xyz.yhsj.parse.entity.MediaUrl
 import xyz.yhsj.parse.entity.ParseResult
 import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
@@ -13,6 +15,22 @@ import java.util.*
  */
 object Sohu : Parse {
     override fun download(url: String): ParseResult {
+
+        try {
+            val vid = getVid(url)
+            if (vid.isNullOrBlank()) {
+                return ParseResult(code = 500, msg = "获取视频id失败")
+            }
+            return downloadByVid(url, vid)
+        } catch (e: Exception) {
+            return ParseResult(code = 500, msg = e.message ?: "")
+        }
+    }
+
+    /**
+     * 获取id
+     */
+    fun getVid(url: String): String {
         var vid: String? = ""
         if ("http://share.vrs.sohu.com" in url) {
             vid = "id=(\\d+)".match1(url)
@@ -22,12 +40,21 @@ object Sohu : Parse {
             vid = "\\Wvid\\s*[\\:=]\\s*['\"]?(\\d+)['\"]?".match1(html)
         }
 
-        if ("http://tv.sohu.com/" in url) {
+        return vid ?: ""
+    }
 
-            var hqvid = 0
+    /**
+     * 获取连接
+     */
+    fun downloadByVid(url: String, vid: String): ParseResult {
+        val mediaFile = MediaFile()
+
+        if ("http://tv.sohu.com/" in url || "https://m.tv.sohu.com/" in url) {
+
             var info = HttpRequest.get("http://hot.vrs.sohu.com/vrs_flash.action?vid=$vid").body().jsonObject
-            for (qtyp in arrayOf("oriVid", "superVid", "highVid", "norVid", "relativeId")) {
 
+            for (qtyp in arrayOf("oriVid", "superVid", "highVid", "norVid", "relativeId")) {
+                var hqvid = 0
 
                 if (!info.isNull("data")) {
                     hqvid = info.getJSONObject("data").getInt(qtyp)
@@ -40,55 +67,65 @@ object Sohu : Parse {
 
                     if (info.isNull("allot")) {
                         continue
+                    } else {
+                        val host = info.getString("allot")
+                        val prot = info.getString("prot")
+                        val tvid = info.getString("tvid")
+
+                        val data = info.getJSONObject("data")
+                        val title = data.getString("tvName")
+                        val size = data.getLong("totalBytes")
+
+                        mediaFile.title = title
+
+                        val sus = data.getJSONArray("su")
+                        val clipsURLs = data.getJSONArray("clipsURL")
+                        val cks = data.getJSONArray("ck")
+
+                        val mediaUrl = MediaUrl(title)
+                        mediaUrl.stream_type = qtyp
+
+                        for (i in 0..sus.length() - 1) {
+
+                            val su = sus.getString(i)
+                            val clip = clipsURLs.getString(i)
+                            val ck = cks.getString(i)
+                            var clipURL: String
+                            try {
+                                clipURL = URL(clip).path
+                            } catch (e: Exception) {
+                                clipURL = clip
+                            }
+                            val realUrl = real_url(host, hqvid.toString(), tvid, su, clipURL, ck)
+                            mediaUrl.playUrl.add(realUrl)
+                            mediaUrl.downUrl.add(realUrl)
+                        }
+                        mediaFile.url.add(mediaUrl)
                     }
-                    break
-                }
-            }
-
-            val host = info.getString("allot")
-            val prot = info.getString("prot")
-            val tvid = info.getString("tvid")
-
-            val urls = ArrayList<String>()
-
-            val data = info.getJSONObject("data")
-            val title = data.getString("tvName")
-            val size = data.getLong("totalBytes")
-
-
-            val sus = data.getJSONArray("su")
-            val clipsURLs = data.getJSONArray("clipsURL")
-            val cks = data.getJSONArray("ck")
-
-            for (i in 0..sus.length() - 1) {
-                val su = sus.getString(i)
-                val clip = clipsURLs.getString(i)
-                val ck = cks.getString(i)
-                var clipURL: String
-                try {
-                    clipURL = URL(clip).path
-                } catch (e: Exception) {
-                    clipURL = clip
+//                    break
                 }
 
-                urls.add(real_url(host, hqvid.toString(), tvid, su, clipURL, ck))
             }
+
             //TODO urls真实地址
         } else {
             val info = HttpRequest.get("http://my.tv.sohu.com/play/videonew.do?vid=$vid&referer=http://my.tv.sohu.com").body().jsonObject
+
             val host = info.getString("allot")
             val prot = info.getString("prot")
             val tvid = info.getString("tvid")
 
-            val urls = ArrayList<String>()
-
             val data = info.getJSONObject("data")
             val title = data.getString("tvName")
             val size = data.getLong("totalBytes")
+            mediaFile.title = title
+
 
             val sus = data.getJSONArray("su")
             val clipsURLs = data.getJSONArray("clipsURL")
             val cks = data.getJSONArray("ck")
+
+            val mediaUrl = MediaUrl(title)
 
             for (i in 0..sus.length() - 1) {
                 val su = sus.getString(i)
@@ -102,11 +139,17 @@ object Sohu : Parse {
                     clipURL = clip
                 }
 
-                urls.add(real_url(host, vid!!, tvid, su, clipURL, ck))
+                val realUrl = real_url(host, vid, tvid, su, clipURL, ck)
+                mediaUrl.playUrl.add(realUrl)
+                mediaUrl.downUrl.add(realUrl)
             }
+            mediaFile.url.add(mediaUrl)
         }
 
-        return  ParseResult()
+
+        println(mediaFile)
+
+        return ParseResult(data = mediaFile)
     }
 
     /**

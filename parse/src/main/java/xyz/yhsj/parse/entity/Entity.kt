@@ -18,7 +18,7 @@ data class MediaFile(
  */
 data class MediaUrl(
         var title: String,
-        var stream_type: String? = null,
+        var stream_type: String? = "def",
         var playUrl: ArrayList<String> = ArrayList(),
         var downUrl: ArrayList<String> = ArrayList()
 ) : Serializable

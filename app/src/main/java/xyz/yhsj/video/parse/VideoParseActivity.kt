@@ -25,6 +25,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Bitmap
 import android.text.SpannableStringBuilder
 import android.widget.TextView
+import xyz.yhsj.parse.extractors.Sohu
 
 
 class VideoParseActivity : BaseActivity() {
@@ -120,11 +121,18 @@ class VideoParseActivity : BaseActivity() {
                 runOnUiThread {
                     setResult(result)
                 }
-
             }
 
         } else if ("sohu.com" in url) {
-            Toast.makeText(this, "搜狐", Toast.LENGTH_SHORT).show()
+
+            toolbarLayout.title = "搜狐"
+            runAsync {
+                val result = Sohu.download(url)
+                runOnUiThread {
+                    setResult(result)
+                }
+            }
+
         } else if ("qq.com" in url) {
             Toast.makeText(this, "腾讯", Toast.LENGTH_SHORT).show()
         } else {
