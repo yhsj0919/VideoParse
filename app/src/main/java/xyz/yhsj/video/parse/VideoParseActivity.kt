@@ -124,7 +124,6 @@ class VideoParseActivity : BaseActivity() {
             }
 
         } else if ("sohu.com" in url) {
-
             toolbarLayout.title = "搜狐"
             runAsync {
                 val result = Sohu.download(url)

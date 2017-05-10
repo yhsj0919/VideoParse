@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity() {
                             val result = YouKu.download("http://v.youku.com/v_show/id_XODMxNzI4MjQ4.id_XODMxNzI4MjQ4html")
                             if (result.code == 200) {
                                 println(result.data?.title)
+                                println(result.data)
 
                             } else {
                                 println(result.msg)
