@@ -1,8 +1,6 @@
 package xyz.yhsj.parse.utils
 
-import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import kotlin.experimental.and
 
 /**
  * Created by LOVE on 2017/5/12 012.
