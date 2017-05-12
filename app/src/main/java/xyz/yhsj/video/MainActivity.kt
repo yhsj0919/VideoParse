@@ -77,7 +77,14 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         "乐视" -> {
-                            Letv.download("http://www.le.com/ptv/vplay/27085339.html?ref=100000001")
+                            val result = Letv.download("http://www.le.com/ptv/vplay/27085339.html?ref=100000001")
+                            if (result.code == 200) {
+                                println(result.data?.title)
+                                println(result.data)
+
+                            } else {
+                                println(result.msg)
+                            }
                         }
                         "爱奇艺" -> {
                             val result = Iqiyi.download("http://www.iqiyi.com/v_19rrl9crao.html")

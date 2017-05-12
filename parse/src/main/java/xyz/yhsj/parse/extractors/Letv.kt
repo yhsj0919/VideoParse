@@ -8,6 +8,7 @@ import xyz.yhsj.parse.intfc.Parse
 import xyz.yhsj.parse.jsonObject
 import xyz.yhsj.parse.match1
 import xyz.yhsj.parse.utils.HttpRequest
+import xyz.yhsj.parse.utils.SHA1
 import xyz.yhsj.parse.writeToFile
 import java.util.*
 
@@ -42,7 +43,8 @@ object Letv : Parse {
 
 
     fun letv_download_by_vid(vid: String): ParseResult {
-        val url = "http://api.letv.com/mms/out/video/playJson?id=$vid&platid=1&splatid=101&format=1&tkey=${calcTimeKey(Date().time)}&domain=www.letv.com"
+//        val url = "http://api.letv.com/mms/out/video/playJson?id=$vid&platid=1&splatid=101&format=1&tkey=${calcTimeKey(Date().time)}&domain=www.letv.com"
+        val url = "http://player-pc.le.com/mms/out/video/playJson?id=$vid&platid=1&splatid=101&format=1&tkey=${calcTimeKey(Date().time)}&domain=www.le.com&region=cn&source=1000&accesyx=1"
 
         println(url)
 
@@ -52,6 +54,7 @@ object Letv : Parse {
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:54.0) Gecko/20100101 Firefox/54.0")
                 .body()
                 .jsonObject
+                .getJSONObject("msgs")
 
         val video = resp.getJSONObject("playurl")
 
@@ -67,8 +70,13 @@ object Letv : Parse {
         for (key in vkey) {
 
             val mediaUrl = MediaUrl(title)
+            var m3u8Url = video.getJSONArray("domain").getString(0) + dispatch.getJSONArray(key).getString(0)
 
-            val m3u8Url = video.getJSONArray("domain").getString(0) + dispatch.getJSONArray(key).getString(0) + "&ctv=pc&m3v=1&termid=1&format=1&hwtype=un&ostype=Linux&tag=letv&sign=letv&expect=3&tn=${Math.random()}&pay=0&iscpn=f9051&rateid=$key"
+            val uuid = SHA1.sha1(m3u8Url) + "_0"
+
+            m3u8Url = m3u8Url.replace("tss=0", "tss=ios")
+            m3u8Url += "&m3v=1&termid=1&format=1&hwtype=un&ostype=MacOS10.12.4&p1=1&p2=10&p3=-&expect=3&tn=${Math.random()}&vid=$vid&uuid=$uuid&sign=letv"
+
             val resp2 = HttpRequest.get(m3u8Url)
                     .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
                     .header("Accept-Charset", "UTF-8,*;q=0.5")
@@ -76,14 +84,13 @@ object Letv : Parse {
                     .body()
                     .jsonObject
 
-            val m3u8 = HttpRequest.get(resp2.getString("location"))
+            val m3u8 = HttpRequest.get(resp2.getString("location") + "&r=${Date().time} &appid=500")
                     .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
                     .header("Accept-Charset", "UTF-8,*;q=0.5")
                     .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:54.0) Gecko/20100101 Firefox/54.0")
                     .bytes()
 
             val m3u8_list = decode(m3u8)
-
             val filePath = writeToFile(getSDPath() + "/VideoParse/", "$title-$key.m3u8", m3u8_list, false)
 
             mediaUrl.stream_type = key
@@ -145,13 +152,16 @@ object Letv : Parse {
             println(stime.toString())
         }
 
-        val key: Long = 773625421
+//        val key: Long = 773625421
+//
+//        var value = GenerateKeyRor(stime, key % 13)
+//
+//        value = value xor key
+//
+//        value = GenerateKeyRor(value, key % 17)
 
-        var value = GenerateKeyRor(stime, key % 13)
-
-        value = value xor key
-
-        value = GenerateKeyRor(value, key % 17)
+        val magic: Long = 185025305
+        val value = GenerateKeyRor(stime, magic % 17) xor magic
 
         return value
     }
