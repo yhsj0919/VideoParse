@@ -9,6 +9,7 @@ import xyz.yhsj.parse.jsonObject
 import xyz.yhsj.parse.match1
 import xyz.yhsj.parse.utils.Base64
 import xyz.yhsj.parse.utils.HttpRequest
+import java.util.*
 import kotlin.experimental.and
 import kotlin.experimental.xor
 
@@ -90,22 +91,27 @@ object YouKu : Parse {
 
             mediaUrl.stream_type = stream_type["msg"]
 
-            val segs = streams.getJSONObject(i).getJSONArray("segs")
+            var videoSource = "http://pl.youku.com/playlist/m3u8?vid=$vid&type=${stream_type["streamType"]}&ts=${Date().time / 1000}&keyframe=0&sid=$mSid&token=$mToken&ctype=12&ev=1&oip=$mOip&client_id=youkumobileplaypage"
 
-            for (j in 0..segs.length() - 1) {
-
-                val fileId = segs.getJSONObject(j).getString("fileid")
-                val ep = getEp(mSid, fileId, mToken)
-                val key = segs.getJSONObject(j).getString("key")
-
-                //下载地址,还得解析一次
-                val videoUrl = "http://k.youku.com/player/getFlvPath/sid/${mSid}_00/st/${stream_type["type"]}/fileid/$fileId?ctype=12&ep=$ep&ev=1&oip=$mOip&token=$mToken&yxon=1&K=$key"
-
-                val realUrl = HttpRequest.get(videoUrl).body().jsonArray
-
-                mediaUrl.downUrl.add(realUrl.getJSONObject(0).getString("server"))
-                mediaUrl.playUrl.add(realUrl.getJSONObject(0).getString("server"))
-            }
+            mediaUrl.playUrl.add(videoSource)
+            mediaUrl.downUrl.add(videoSource)
+            //下面用于下载视频
+//            val segs = streams.getJSONObject(i).getJSONArray("segs")
+//
+//            for (j in 0..segs.length() - 1) {
+//
+//                val fileId = segs.getJSONObject(j).getString("fileid")
+//                val ep = getEp(mSid, fileId, mToken)
+//                val key = segs.getJSONObject(j).getString("key")
+//
+//                //下载地址,还得解析一次
+//                val videoUrl = "http://k.youku.com/player/getFlvPath/sid/${mSid}_00/st/${stream_type["type"]}/fileid/$fileId?ctype=12&ep=$ep&ev=1&oip=$mOip&token=$mToken&yxon=1&K=$key"
+//
+//                val realUrl = HttpRequest.get(videoUrl).body().jsonArray
+//
+//                mediaUrl.downUrl.add(realUrl.getJSONObject(0).getString("server"))
+//
+//            }
 
             mediaFile.url.add(mediaUrl)
         }
@@ -121,12 +127,12 @@ object YouKu : Parse {
      */
     fun getStreamType(streamType: String): Map<String, String> {
         return when (streamType) {
-            "mp4hd3", "hd3" -> mapOf("type" to "flv", "msg" to "1080")
-            "mp4hd2", "hd2" -> mapOf("type" to "flv", "msg" to "超清")
-            "mp4hd", "mp4" -> mapOf("type" to "mp4", "msg" to "高清")
-            "flvhd", "flv" -> mapOf("type" to "flv", "msg" to "标清")
-            "3gphd" -> mapOf("type" to "3gp", "msg" to "标清(3GP)")
-            else -> mapOf("type" to "flv", "msg" to "标清")
+            "mp4hd3", "hd3" -> mapOf("type" to "flv", "msg" to "1080", "streamType" to "hd3")
+            "mp4hd2", "hd2" -> mapOf("type" to "flv", "msg" to "超清", "streamType" to "hd2")
+            "mp4hd", "mp4" -> mapOf("type" to "mp4", "msg" to "高清", "streamType" to "mp4")
+            "flvhd", "flv" -> mapOf("type" to "flv", "msg" to "标清", "streamType" to "flv")
+            "3gphd" -> mapOf("type" to "3gp", "msg" to "标清(3GP)", "streamType" to "3gp")
+            else -> mapOf("type" to "flv", "msg" to "标清", "streamType" to "flv")
         }
     }
 

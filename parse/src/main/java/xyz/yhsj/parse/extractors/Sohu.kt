@@ -18,6 +18,7 @@ object Sohu : Parse {
 
         try {
             val vid = getVid(url)
+            println(vid)
             if (vid.isNullOrBlank()) {
                 return ParseResult(code = 500, msg = "获取视频id失败")
             }
@@ -49,7 +50,7 @@ object Sohu : Parse {
     fun downloadByVid(url: String, vid: String): ParseResult {
         val mediaFile = MediaFile()
 
-        if ("http://tv.sohu.com/" in url || "https://m.tv.sohu.com/" in url) {
+        if ("://tv.sohu.com/" in url || "://m.tv.sohu.com/" in url) {
 
             var info = HttpRequest.get("http://hot.vrs.sohu.com/vrs_flash.action?vid=$vid").body().jsonObject
 
@@ -65,6 +66,7 @@ object Sohu : Parse {
                 if (hqvid != 0 && hqvid.toString() != vid) {
                     info = HttpRequest.get("http://hot.vrs.sohu.com/vrs_flash.action?vid=$hqvid").body().jsonObject
 
+                    println(info)
                     if (info.isNull("allot")) {
                         continue
                     } else {
