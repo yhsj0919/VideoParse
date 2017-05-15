@@ -12,9 +12,14 @@ import java.util.*
 
 /**搜狐视频
  * Created by LOVE on 2017/4/19 019.
+ *
+ *
  */
 object Sohu : Parse {
     override fun download(url: String): ParseResult {
+
+       val tempUrl =url.replace("://m.","://")
+
 
         try {
             val vid = getVid(url)
@@ -22,7 +27,7 @@ object Sohu : Parse {
             if (vid.isNullOrBlank()) {
                 return ParseResult(code = 500, msg = "获取视频id失败")
             }
-            return downloadByVid(url, vid)
+            return downloadByVid(tempUrl, vid)
         } catch (e: Exception) {
             return ParseResult(code = 500, msg = e.message ?: "")
         }
@@ -48,11 +53,18 @@ object Sohu : Parse {
      * 获取连接
      */
     fun downloadByVid(url: String, vid: String): ParseResult {
+
+        println(url)
+
         val mediaFile = MediaFile()
 
-        if ("://tv.sohu.com/" in url || "://m.tv.sohu.com/" in url) {
+        if ("://tv.sohu.com/" in url) {
+            //后期改为这个地址解析
+            //http://api.tv.sohu.com/v4/video/info/3357323.json?site=1&api_key=695fe827ffeb7d74260a813025970bd5&sver=1.0&partner=1
 
             var info = HttpRequest.get("http://hot.vrs.sohu.com/vrs_flash.action?vid=$vid").body().jsonObject
+
+            println(info)
 
             for (qtyp in arrayOf("oriVid", "superVid", "highVid", "norVid", "relativeId")) {
                 var hqvid = 0
@@ -112,6 +124,8 @@ object Sohu : Parse {
             //TODO urls真实地址
         } else {
             val info = HttpRequest.get("http://my.tv.sohu.com/play/videonew.do?vid=$vid&referer=http://my.tv.sohu.com").body().jsonObject
+            println(">>>>>>>>>>>>>>>>>>>>>>>")
+            println(info)
 
             val host = info.getString("allot")
             val prot = info.getString("prot")

@@ -68,7 +68,11 @@ fun getSDPath(): String {
  * *
  * @param append   是否追加
  */
-fun writeToFile(filePath: String, fileName: String, content: String, append: Boolean): String {
+fun writeToFile(filePath: String, tempfileName: String, content: String, append: Boolean): String {
+
+    val FilePattern = Pattern.compile("[\\\\/:：\\-*?\"<>|]")
+    val fileName = FilePattern.matcher(tempfileName).replaceAll("_")
+
 
     val file = File(filePath)
     if (!file.exists()) {

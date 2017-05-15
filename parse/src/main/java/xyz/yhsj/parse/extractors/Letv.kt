@@ -91,7 +91,8 @@ object Letv : Parse {
                     .bytes()
 
             val m3u8_list = decode(m3u8)
-            val filePath = writeToFile(getSDPath() + "/VideoParse/", "$title-$key.m3u8", m3u8_list, false)
+            val filePath = writeToFile(getSDPath() + "/VideoParse/", "${title.replace("[\\\\/:*?\"<>|]", ":")}-$key.m3u8", m3u8_list, false)
+            println(filePath)
 
             mediaUrl.stream_type = key
             mediaUrl.playUrl.add(filePath)
