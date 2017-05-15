@@ -93,6 +93,7 @@ class VideoActivity : AppCompatActivity() {
 
             override fun onClickStartError(url: String, vararg objects: Any) {
                 super.onClickStartError(url, objects)
+                GSYVideoManager.instance().setVideoType(this@VideoActivity, GSYVideoType.IJKPLAYER)
             }
 
             override fun onQuitFullscreen(url: String, vararg objects: Any) {

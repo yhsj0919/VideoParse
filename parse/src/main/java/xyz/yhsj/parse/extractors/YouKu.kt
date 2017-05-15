@@ -91,33 +91,27 @@ object YouKu : Parse {
 
             mediaUrl.stream_type = stream_type["msg"]
 
-            println(mediaUrl.stream_type)
-
-            //下面这句用于获取m3u8播放地址
             var videoSource = "http://pl.youku.com/playlist/m3u8?vid=$vid&type=${stream_type["streamType"]}&ts=${Date().time / 1000}&keyframe=0&sid=$mSid&token=$mToken&ctype=12&ev=1&oip=$mOip&client_id=youkumobileplaypage"
 
-            println(videoSource)
-
-
-            val segs = streams.getJSONObject(i).getJSONArray("segs")
-
-            for (j in 0..segs.length() - 1) {
-
-                val fileId = segs.getJSONObject(j).getString("fileid")
-                val ep = getEp(mSid, fileId, mToken)
-                val key = segs.getJSONObject(j).getString("key")
-
-
-                //下载地址,还得解析一次
-                val videoUrl = "http://k.youku.com/player/getFlvPath/sid/${mSid}_00/st/${stream_type["type"]}/fileid/$fileId?ctype=12&ep=$ep&ev=1&oip=$mOip&token=$mToken&yxon=1&K=$key"
-
-                val realUrl = HttpRequest.get(videoUrl).body().jsonArray
-
-                mediaUrl.downUrl.add(realUrl.getJSONObject(0).getString("server"))
-
-            }
-
             mediaUrl.playUrl.add(videoSource)
+            mediaUrl.downUrl.add(videoSource)
+            //下面用于下载视频
+//            val segs = streams.getJSONObject(i).getJSONArray("segs")
+//
+//            for (j in 0..segs.length() - 1) {
+//
+//                val fileId = segs.getJSONObject(j).getString("fileid")
+//                val ep = getEp(mSid, fileId, mToken)
+//                val key = segs.getJSONObject(j).getString("key")
+//
+//                //下载地址,还得解析一次
+//                val videoUrl = "http://k.youku.com/player/getFlvPath/sid/${mSid}_00/st/${stream_type["type"]}/fileid/$fileId?ctype=12&ep=$ep&ev=1&oip=$mOip&token=$mToken&yxon=1&K=$key"
+//
+//                val realUrl = HttpRequest.get(videoUrl).body().jsonArray
+//
+//                mediaUrl.downUrl.add(realUrl.getJSONObject(0).getString("server"))
+//
+//            }
 
             mediaFile.url.add(mediaUrl)
         }
