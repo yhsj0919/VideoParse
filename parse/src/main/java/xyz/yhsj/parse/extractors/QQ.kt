@@ -8,9 +8,15 @@ import xyz.yhsj.parse.jsonObject
 import xyz.yhsj.parse.match1
 import xyz.yhsj.parse.matchAll
 import xyz.yhsj.parse.utils.HttpRequest
+import java.util.*
 
 /**QQ视频
  * Created by LOVE on 2017/4/21 021.
+ * http://vv.video.qq.com/gethls?vid=i0137wt2799&charge=0&otype=json&platform=11001&_rnd=1494992462
+ *
+ *
+ *http://vv.video.qq.com/getinfo?callback=txplayerJsonpCallBack_getinfo_664954&&charge=0&vid=a00235p3f13&defaultfmt=auto&otype=json&guid=5d449203f36ca784400f46199ff08cf8&platform=10201&defnpayver=1&appVer=3.0.98&sdtfrom=v1010&host=v.qq.com&ehost=http%3A%2F%2Fv.qq.com%2Ftv%2Fp%2Ftopic%2FOdetoJoy2%2Findex.html&sphttps=0&_rnd=1495013247&defn=shd&fhdswitch=1&show1080p=1&isHLS=1&dtype=3&sphls=1&newplatform=10201&defsrc=2&_qv_rmt=brpeWPIBA190346G1%3D&_qv_rmt2=QjGfvUM4145127sQA%3D&_1495013247062=
+
  */
 object QQ : Parse {
     override fun download(url: String): ParseResult {
@@ -86,6 +92,10 @@ object QQ : Parse {
      * 通过id获取视频
      */
     fun qq_download_by_vid(vid: String): ParseResult {
+
+        println(vid)
+        println(Date().time)
+
         val info_api = "http://vv.video.qq.com/getinfo?otype=json&appver=3%2E2%2E19%2E333&platform=11&defnpayver=1&vid=$vid"
         val info = HttpRequest.get(info_api)
                 .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
@@ -98,8 +108,8 @@ object QQ : Parse {
         var parts_prefix = info.getJSONObject("vl").getJSONArray("vi").getJSONObject(0).getJSONObject("ul").getJSONArray("ui").getJSONObject(0).getString("url")
         val parts_formats = info.getJSONObject("fl").getJSONArray("fi")
 
-        val mediaFile=MediaFile()
-        mediaFile.title=parts_ti
+        val mediaFile = MediaFile()
+        mediaFile.title = parts_ti
 
         if (parts_prefix.endsWith("/")) {
             parts_prefix = parts_prefix.substring(0, parts_prefix.length - 1)
