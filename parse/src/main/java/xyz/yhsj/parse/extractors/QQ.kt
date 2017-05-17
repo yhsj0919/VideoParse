@@ -15,7 +15,12 @@ import java.util.*
  * http://vv.video.qq.com/gethls?vid=i0137wt2799&charge=0&otype=json&platform=11001&_rnd=1494992462
  *
  *http://vv.video.qq.com/getinfo?vid=a00235p3f13&otype=json&dtype=3
-
+http://vv.video.qq.com/getinfo?
+&vid=a00235p3f13
+&otype=json
+&defnpayver=1//显示蓝光
+&_rnd=1495026640
+&dtype=3
  */
 object QQ : Parse {
     override fun download(url: String): ParseResult {
@@ -88,9 +93,45 @@ object QQ : Parse {
     }
 
     /**
-     * 通过id获取视频
+     * 获取播放地址
      */
     fun qq_download_by_vid(vid: String): ParseResult {
+        val info_api = " http://vv.video.qq.com/getinfo?&vid=$vid&otype=json&defnpayver=1&_rnd=${Date().time}&dtype=3"
+
+        val info = HttpRequest.get(info_api)
+                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                .header("Accept-Charset", "UTF-8,*;q=0.5")
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:54.0) Gecko/20100101 Firefox/54.0")
+                .body().replace("QZOutputJson=", "")
+                .jsonObject
+
+        val parts_ti = info.getJSONObject("vl").getJSONArray("vi").getJSONObject(0).getString("ti")
+
+        val video_type = info.getJSONObject("fl").getJSONArray("fi")
+
+        val video_url = info.getJSONObject("vl").getJSONArray("vi").getJSONObject(0).getJSONObject("ul").getJSONArray("ui")
+
+        println(parts_ti)
+
+        for (i in 0..video_type.length()-1) {
+            println(video_type.getJSONObject(i))
+        }
+
+        println(">>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+        for (i in 0..video_url.length()-1) {
+            println(video_url.getJSONObject(i))
+        }
+
+        return ParseResult()
+
+    }
+
+
+    /**
+     * 通过id获取视频
+     */
+    fun qq_download_by_vid2(vid: String): ParseResult {
 
         println(vid)
         println(Date().time)
