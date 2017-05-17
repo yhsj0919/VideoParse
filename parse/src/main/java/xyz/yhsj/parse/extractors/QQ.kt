@@ -14,8 +14,7 @@ import java.util.*
  * Created by LOVE on 2017/4/21 021.
  * http://vv.video.qq.com/gethls?vid=i0137wt2799&charge=0&otype=json&platform=11001&_rnd=1494992462
  *
- *
- *http://vv.video.qq.com/getinfo?callback=txplayerJsonpCallBack_getinfo_664954&&charge=0&vid=a00235p3f13&defaultfmt=auto&otype=json&guid=5d449203f36ca784400f46199ff08cf8&platform=10201&defnpayver=1&appVer=3.0.98&sdtfrom=v1010&host=v.qq.com&ehost=http%3A%2F%2Fv.qq.com%2Ftv%2Fp%2Ftopic%2FOdetoJoy2%2Findex.html&sphttps=0&_rnd=1495013247&defn=shd&fhdswitch=1&show1080p=1&isHLS=1&dtype=3&sphls=1&newplatform=10201&defsrc=2&_qv_rmt=brpeWPIBA190346G1%3D&_qv_rmt2=QjGfvUM4145127sQA%3D&_1495013247062=
+ *http://vv.video.qq.com/getinfo?vid=a00235p3f13&otype=json&dtype=3
 
  */
 object QQ : Parse {
