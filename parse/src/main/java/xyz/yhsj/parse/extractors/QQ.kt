@@ -116,7 +116,7 @@ object QQ : Parse {
 //http://vv.video.qq.com/getinfo?charge=0&vid=$vid&defaultfmt=auto&otype=json&guid=5d449203f36ca784400f46199ff08cf8&platform=10201&defnpayver=1&appVer=3.0.98&sdtfrom=v1010&host=v.qq.com&sphttps=0&_rnd=${Date().time}&defn=shd&fhdswitch=1&show1080p=1&isHLS=1&dtype=3&sphls=1&newplatform=10201&defsrc=2&_qv_rmt=brpeWPIBA190346G1%3D&_qv_rmt2=QjGfvUM4145127sQA%3D&_${Date().time}=
 
 //        val info_api = " http://vv.video.qq.com/getinfo?&vid=$vid&otype=json&defnpayver=1&_rnd=${Date().time}&dtype=3&_${Date().time}="
-
+        //下面参数有问题,不对会被限速(三个特殊的)
         val info_api = "http://vv.video.qq.com/getinfo?charge=0&vid=$vid&defaultfmt=auto&otype=json&guid=5d449203f36ca784400f46199ff08cf8&platform=10201&defnpayver=1&appVer=3.0.98&sdtfrom=v1010&host=v.qq.com&sphttps=0&_rnd=${Date().time}&defn=shd&fhdswitch=1&show1080p=1&isHLS=1&dtype=3&sphls=1&newplatform=10201&defsrc=2&_qv_rmt=brpeWPIBA190346G1%3D&_qv_rmt2=QjGfvUM4145127sQA%3D&_${Date().time}="
 
         println(info_api)
