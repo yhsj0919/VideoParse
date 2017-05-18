@@ -12,9 +12,6 @@ import android.widget.Toast
 import kotterknife.bindView
 import xyz.yhsj.parse.entity.ParseResult
 import xyz.yhsj.video.BaseActivity
-import xyz.yhsj.parse.extractors.Iqiyi
-import xyz.yhsj.parse.extractors.Letv
-import xyz.yhsj.parse.extractors.YouKu
 import xyz.yhsj.parse.match0
 import xyz.yhsj.parse.runAsync
 import xyz.yhsj.video.R
@@ -25,7 +22,8 @@ import android.graphics.BitmapFactory
 import android.graphics.Bitmap
 import android.text.SpannableStringBuilder
 import android.widget.TextView
-import xyz.yhsj.parse.extractors.Sohu
+import xyz.yhsj.parse.entity.MediaType
+import xyz.yhsj.parse.extractors.*
 
 
 class VideoParseActivity : BaseActivity() {
@@ -133,7 +131,13 @@ class VideoParseActivity : BaseActivity() {
             }
 
         } else if ("qq.com" in url) {
-            Toast.makeText(this, "腾讯", Toast.LENGTH_SHORT).show()
+            toolbarLayout.title = "腾讯"
+            runAsync {
+                val result = QQ.download(url)
+                runOnUiThread {
+                    setResult(result)
+                }
+            }
         } else {
 
             Toast.makeText(this, "暂不支持该网站", Toast.LENGTH_SHORT).show()
@@ -147,7 +151,17 @@ class VideoParseActivity : BaseActivity() {
 
         if (result.code == 200) {
             toolbarLayout.title = result.data?.title
-            streamAdapter.data = result.data?.url
+
+            val data = result.data
+            if (data?.type == MediaType.VIDEO) {
+                streamAdapter.data = data.url
+            } else if (data?.type == MediaType.VIDEO_LIST) {
+                data.mediaList.forEach {
+                    streamAdapter.addMoreData(it.url)
+                }
+            } else {
+                Toast.makeText(this, "暂不支持展示此类型", Toast.LENGTH_SHORT).show()
+            }
         } else {
             println(result.msg)
             Toast.makeText(this, "解析失败,请稍后重试", Toast.LENGTH_SHORT).show()

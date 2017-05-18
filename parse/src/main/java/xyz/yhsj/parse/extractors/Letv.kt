@@ -27,7 +27,7 @@ object Letv : Parse {
 
             return letv_download_by_vid(vid)
         } catch (e: Exception) {
-            return ParseResult(code = 500, msg = e.message ?: "")
+            return ParseResult(code = 500, msg = e.message ?: "未知错误")
         }
 
     }

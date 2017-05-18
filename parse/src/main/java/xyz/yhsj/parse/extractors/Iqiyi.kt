@@ -27,7 +27,7 @@ object Iqiyi : Parse {
         try {
             return getData(url)
         } catch (e: Exception) {
-            return ParseResult(code = 500, msg = e.message ?: "")
+            return ParseResult(code = 500, msg = e.message ?: "未知错误")
         }
     }
 

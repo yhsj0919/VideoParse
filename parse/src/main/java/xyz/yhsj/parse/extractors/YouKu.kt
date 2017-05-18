@@ -31,7 +31,7 @@ object YouKu : Parse {
 
             return getdata(vid)
         } catch (e: Exception) {
-            return ParseResult(code = 500, msg = e.message ?: "")
+            return ParseResult(code = 500, msg = e.message ?: "未知错误")
         }
 
     }

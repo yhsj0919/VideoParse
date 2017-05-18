@@ -36,9 +36,6 @@ class VideoActivity : AppCompatActivity() {
         mediaUrl = intent.getSerializableExtra("video") as MediaUrl?
 
 
-        GSYVideoManager.instance().setVideoType(this, GSYVideoType.IJKEXOPLAYER)
-
-
         if (mediaUrl != null) {
             val videos = ArrayList<GSYVideoModel>()
 
@@ -93,7 +90,7 @@ class VideoActivity : AppCompatActivity() {
 
             override fun onClickStartError(url: String, vararg objects: Any) {
                 super.onClickStartError(url, objects)
-                GSYVideoManager.instance().setVideoType(this@VideoActivity, GSYVideoType.IJKPLAYER)
+                GSYVideoManager.instance().setVideoType(this@VideoActivity, GSYVideoType.IJKEXOPLAYER)
             }
 
             override fun onQuitFullscreen(url: String, vararg objects: Any) {
