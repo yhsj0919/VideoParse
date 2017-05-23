@@ -99,12 +99,14 @@ class MainActivity : AppCompatActivity() {
 
                         }
                         "搜狐" -> {
-                            Sohu.download("http://my.tv.sohu.com/pl/9186474/88706000.shtml")
+                            Sohu.download("http://m.tv.sohu.com/v3745060.shtml?channeled=1211010100&aid=9218631")
+//                            Sohu.download("http://my.tv.sohu.com/pl/9186474/88706000.shtml")
 //                            Sohu.download("http://tv.sohu.com/20150915/n421160663.shtml")
 //                            https://m.tv.sohu.com/v2581078.shtml?aid=9056592&channeled=1210040001&columnid=297
                         }
                         "腾讯" -> {
-                            QQ.download("https://v.qq.com/x/cover/kp4m5ys7tms73cd.html")
+                            QQ.download("https://v.qq.com/x/cover/nuijxf6k13t6z9b/a0023zlgbz3.html")
+//                            QQ.download("https://v.qq.com/x/cover/kp4m5ys7tms73cd.html")
 //                            QQ.download("http://kg.qq.com/share.html?s=2QEQDZ2QTvNYN2qz")
 
                         }
