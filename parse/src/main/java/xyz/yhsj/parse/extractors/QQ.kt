@@ -25,6 +25,9 @@ http://vv.video.qq.com/getinfo?
 &dtype=3
  */
 object QQ : Parse {
+    val seed = "#$#@#*ad"
+
+
     override fun download(url: String): ParseResult {
         try {
             return downloadByiteSite(url)
@@ -92,7 +95,13 @@ object QQ : Parse {
             vid = "\\bvid=(\\w+)".match1(url)
             title = vid
         } else {
-            val content = HttpRequest.get(url).body()
+            val content = HttpRequest.get(url)
+                    .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                    .header("Accept-Charset", "UTF-8,*;q=0.5")
+                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:54.0) Gecko/20100101 Firefox/54.0")
+                    //处理内部重定向
+                    .followRedirects(true)
+                    .body()
             vid = "\\bvid=(\\w+)".match1(url)
             // val vid2="\\bvid=(\\w+)".match1(content)
             vid2 = "vid\"*\\s*:\\s*\"\\s*([^\"]+)\"".match1(content)
@@ -108,14 +117,18 @@ object QQ : Parse {
     }
 
     /**
-     * 获取播放地址
+     * 解密算法实在费劲
+     * 这个有问题,以后再改,
      */
     fun qq_download_by_vid(vid: String): MediaFile {
 
         val mediaFile = MediaFile()
-//http://vv.video.qq.com/getinfo?charge=0&vid=$vid&defaultfmt=auto&otype=json&guid=5d449203f36ca784400f46199ff08cf8&platform=10201&defnpayver=1&appVer=3.0.98&sdtfrom=v1010&host=v.qq.com&sphttps=0&_rnd=${Date().time}&defn=shd&fhdswitch=1&show1080p=1&isHLS=1&dtype=3&sphls=1&newplatform=10201&defsrc=2&_qv_rmt=brpeWPIBA190346G1%3D&_qv_rmt2=QjGfvUM4145127sQA%3D&_${Date().time}=
+        //http://vv.video.qq.com/getinfo?charge=0&vid=$vid&defaultfmt=auto&otype=json&guid=5d449203f36ca784400f46199ff08cf8&platform=10201&defnpayver=1&appVer=3.0.98&sdtfrom=v1010&host=v.qq.com&sphttps=0&_rnd=${Date().time}&defn=shd&fhdswitch=1&show1080p=1&isHLS=1&dtype=3&sphls=1&newplatform=10201&defsrc=2&_qv_rmt=brpeWPIBA190346G1%3D&_qv_rmt2=QjGfvUM4145127sQA%3D&_${Date().time}=
 
-//        val info_api = " http://vv.video.qq.com/getinfo?&vid=$vid&otype=json&defnpayver=1&_rnd=${Date().time}&dtype=3&_${Date().time}="
+        //val info_api = " http://vv.video.qq.com/getinfo?&vid=$vid&otype=json&defnpayver=1&_rnd=${Date().time}&dtype=3&_${Date().time}="
+
+        //http://vv.video.qq.com/getinfo?charge=0&vid=u0023ickfto&defaultfmt=auto&otype=json&guid=5d449203f36ca784400f46199ff08cf8&platform=10201&defnpayver=1&appVer=3.0.100&sdtfrom=v1010&host=v.qq.com&ehost=http%3A%2F%2Fv.qq.com%2Ftv%2Fp%2Ftopic%2Fzetianji%2Findex.html&sphttps=0&_rnd=1495436087&defn=shd&fhdswitch=0&show1080p=1&isHLS=1&dtype=3&sphls=1&newplatform=10201&defsrc=2&_qv_rmt=2A03HORFA19468FIA%3D&_qv_rmt2=3kho1Sbm145307kAg%3D&_1495436087840=
+
         //下面参数有问题,不对会被限速(三个特殊的)
         val info_api = "http://vv.video.qq.com/getinfo?charge=0&vid=$vid&defaultfmt=auto&otype=json&guid=5d449203f36ca784400f46199ff08cf8&platform=10201&defnpayver=1&appVer=3.0.98&sdtfrom=v1010&host=v.qq.com&sphttps=0&_rnd=${Date().time}&defn=shd&fhdswitch=1&show1080p=1&isHLS=1&dtype=3&sphls=1&newplatform=10201&defsrc=2&_qv_rmt=brpeWPIBA190346G1%3D&_qv_rmt2=QjGfvUM4145127sQA%3D&_${Date().time}="
 
@@ -155,6 +168,7 @@ object QQ : Parse {
 
     /**
      * 通过id获取视频
+     * 以前的解析算法
      */
     fun qq_download_by_vid2(vid: String): ParseResult {
 
@@ -306,6 +320,61 @@ object QQ : Parse {
         mediaFile.url.add(mediaUrl)
 
         return ParseResult(data = mediaFile)
+    }
+
+
+    fun func_xx(a: String, b: String, c: String, d: String, f: String = (Date().time / 1000).toString()) {
+        var g: String = ""
+        var h: String = ""
+
+        val j = _func_hex_to_string(_func_ha(a + b + f + seed + g + h + d + c))
+
+    }
+
+    fun _func_hex_to_string(a: String): String {
+
+        return ""
+    }
+
+    fun _func_ha(d: String): String {
+        val c = Array(64, { i -> 0 or (4294967296 * Math.abs(Math.sin((i + 1).toDouble()))).toLong().toInt() })
+        val j = d
+        val k = j.length
+        val i = Array(k, { _ -> 0 })
+
+        for (m in 0..k - 1) {
+            i[m shr 2] = i[m shr 2] or ((if (j[m].toInt() != 0) j[m].toInt() else 128) shl 8 * (m % 4))
+        }
+
+        i[k shr 2] = i[k shr 2] or (128 shl 8 * (k % 4))
+
+        val e = 1732584193
+        val f = -271733879
+        val l = intArrayOf(1732584193, -271733879, e.inv(), f.inv())
+
+        val a = 16
+        val d = (k + 8 shr 6) * a + 14
+        i[d] = 8 * k
+
+        val m = 0
+
+        while (d > m) {
+
+            val h = 0
+            val k = l
+
+            while (h > 64) {
+
+            }
+
+
+        }
+
+
+
+        l.forEach { println(it) }
+
+        return ""
     }
 
 

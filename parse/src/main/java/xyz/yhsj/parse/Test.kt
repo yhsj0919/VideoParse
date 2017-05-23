@@ -1,6 +1,7 @@
 package xyz.yshj.parse
 
 import xyz.yhsj.parse.extractors.KuGou
+import xyz.yhsj.parse.extractors.QQ
 
 /**
  * Created by LOVE on 2017/2/17 017.
@@ -14,5 +15,12 @@ fun main(args: Array<String>) {
 
 //    NeteaseUtils.netease_download("http://music.163.com/#/song?id=185879")
 
+
+    val g = "10201"
+    val h = "u0023ickfto"
+    val i = "v1010"
+    val k = "1"
+    val f = "1495436087840"
+    QQ.func_xx(g, h, i, k, f)
 
 }
