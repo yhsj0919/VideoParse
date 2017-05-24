@@ -59,6 +59,46 @@ object YouKu : Parse {
      * 获取下载地址
      */
     fun getdata(vid: String): ParseResult {
+        val api_url = "https://ups.youku.com/ups/get.json?vid=$vid&ccode=0501&client_ip=192.168.1.1&utid=&client_ts=${Date().time / 1000}"
+        println(api_url)
+        val videoInfo = HttpRequest
+                .get(api_url)
+                .header("Referer", "http://static.youku.com/")
+                .header("Cookie", "__ysuid=${Date().time / 1000}")
+                .body()
+                .jsonObject
+
+        val video = videoInfo.getJSONObject("data").getJSONObject("video")
+        val title = video.getString("title")
+
+        val mediaFile = MediaFile()
+        mediaFile.title = title
+
+        val streams = videoInfo.getJSONObject("data").getJSONArray("stream")
+        for (i in 0..streams.length() - 1) {
+
+            val mediaUrl = MediaUrl(title)
+
+            val stream_type = getStreamType(streams.getJSONObject(i).getString("stream_type"))
+
+            mediaUrl.stream_type = stream_type["msg"]
+
+            val videoSource = streams.getJSONObject(i).getString("m3u8_url")
+
+            mediaUrl.playUrl.add(videoSource)
+            mediaUrl.downUrl.add(videoSource)
+
+            mediaFile.url.add(mediaUrl)
+        }
+        return ParseResult(data = mediaFile)
+    }
+
+
+    /**
+     * 获取下载地址
+     * 接口失效啦
+     */
+    fun getdata2(vid: String): ParseResult {
         val url10 = "http://play.youku.com/play/get.json?ct=10&vid=$vid"
         val url12 = "http://play.youku.com/play/get.json?ct=12&vid=$vid"
 
