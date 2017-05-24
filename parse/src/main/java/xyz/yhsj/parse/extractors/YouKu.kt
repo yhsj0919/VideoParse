@@ -16,6 +16,10 @@ import kotlin.experimental.xor
 
 /**优酷解析
  * Created by LOVE on 2017/4/13 013.
+ *
+ * 2017/5/24地址失效,改为如下地址播放(后期处理)
+ * https://ups.youku.com/ups/get.json?vid=XODMxNzI4MjQ4&ccode=0501&client_ip=0.0.0.0&client_ts=1495612499&utid=
+ *
  */
 object YouKu : Parse {
     val template1 = "becaf9be"
