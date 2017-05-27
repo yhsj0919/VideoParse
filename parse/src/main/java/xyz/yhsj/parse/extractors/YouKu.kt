@@ -26,6 +26,9 @@ object YouKu : Parse {
     val template2 = "bf7e5f01"
 
     override fun download(url: String): ParseResult {
+
+        fetch_cna()
+
         try {
 
             val vid = get_vid_from_url(url)
@@ -59,7 +62,7 @@ object YouKu : Parse {
      * 获取下载地址
      */
     fun getdata(vid: String): ParseResult {
-        val api_url = "https://ups.youku.com/ups/get.json?vid=$vid&ccode=0501&client_ip=192.168.1.1&utid=&client_ts=${Date().time / 1000}"
+        val api_url = "https://ups.youku.com/ups/get.json?vid=$vid&ccode=0501&client_ip=192.168.1.1&utid=${fetch_cna()}&client_ts=${Date().time / 1000}"
         println(api_url)
         val videoInfo = HttpRequest
                 .get(api_url)
@@ -93,77 +96,6 @@ object YouKu : Parse {
         return ParseResult(data = mediaFile)
     }
 
-
-    /**
-     * 获取下载地址
-     * 接口失效啦
-     */
-    fun getdata2(vid: String): ParseResult {
-        val url10 = "http://play.youku.com/play/get.json?ct=10&vid=$vid"
-        val url12 = "http://play.youku.com/play/get.json?ct=12&vid=$vid"
-
-        val resp12 = HttpRequest.get(url12).header("Referer", "http://static.youku.com/").header("Cookie", "__ysuid={}").body().jsonObject
-
-        if (!resp12.isNull("error")) {
-            return ParseResult(code = 500, msg = resp12.getJSONObject("error").getString("note"))
-        }
-
-        val resp10 = HttpRequest.get(url10).header("Referer", "http://static.youku.com/").header("Cookie", "__ysuid={}").body().jsonObject
-
-        val security = resp12.getJSONObject("data").getJSONObject("security")
-        val strEncrypt = security.getString("encrypt_string")
-
-        val sidAndToken = getSidAndToken(strEncrypt)
-
-        val mSid = sidAndToken[0]
-        val mToken = sidAndToken[1]
-        val mOip = security.getString("ip")
-
-        val mediaFile = MediaFile()
-
-        val video = resp10.getJSONObject("data").getJSONObject("video")
-        val title = video.getString("title")
-        mediaFile.title = title
-
-        val streams = resp10.getJSONObject("data").getJSONArray("stream")
-
-        for (i in 0..streams.length() - 1) {
-
-            val mediaUrl = MediaUrl(title)
-
-            val stream_type = getStreamType(streams.getJSONObject(i).getString("stream_type"))
-
-            mediaUrl.stream_type = stream_type["msg"]
-
-            var videoSource = "http://pl.youku.com/playlist/m3u8?vid=$vid&type=${stream_type["streamType"]}&ts=${Date().time / 1000}&keyframe=0&sid=$mSid&token=$mToken&ctype=12&ev=1&oip=$mOip&client_id=youkumobileplaypage"
-
-            mediaUrl.playUrl.add(videoSource)
-            mediaUrl.downUrl.add(videoSource)
-            //下面用于下载视频
-//            val segs = streams.getJSONObject(i).getJSONArray("segs")
-//
-//            for (j in 0..segs.length() - 1) {
-//
-//                val fileId = segs.getJSONObject(j).getString("fileid")
-//                val ep = getEp(mSid, fileId, mToken)
-//                val key = segs.getJSONObject(j).getString("key")
-//
-//                //下载地址,还得解析一次
-//                val videoUrl = "http://k.youku.com/player/getFlvPath/sid/${mSid}_00/st/${stream_type["type"]}/fileid/$fileId?ctype=12&ep=$ep&ev=1&oip=$mOip&token=$mToken&yxon=1&K=$key"
-//
-//                val realUrl = HttpRequest.get(videoUrl).body().jsonArray
-//
-//                mediaUrl.downUrl.add(realUrl.getJSONObject(0).getString("server"))
-//
-//            }
-
-            mediaFile.url.add(mediaUrl)
-        }
-
-        return ParseResult(data = mediaFile)
-    }
-
-
     /**
      * 获取视频的格式与描述
 
@@ -181,48 +113,12 @@ object YouKu : Parse {
     }
 
     /**
-     * 获取必要字段
+     * 获取utid
      */
-    fun getSidAndToken(encryptStr: String): List<String> {
-        val s = String(youkuEncoder(template1.toByteArray(), Base64.decode(encryptStr)))
-        val rst = s.split("_")
-        return rst
+    fun fetch_cna(): String {
+        val url = "http://gm.mmstat.com/yt/ykcomment.play.commentInit?cna="
+        val resp = HttpRequest.get(url).headers("Set-Cookie")[0]
+        return resp.split(";")[0].split("=")[1]
     }
 
-    /**
-     * 获取必要字段
-     */
-    fun getEp(sid: String, fileId: String, token: String): String {
-        val epT = youkuEncoder(template2.toByteArray(), "${sid}_${fileId}_${token}".toByteArray())
-        return Base64.encode(epT)
-    }
-
-    fun youkuEncoder(b1: ByteArray, b2: ByteArray): ByteArray {
-        val result = ByteArray(b2.size)
-
-        val s = IntArray(256)
-        for (i in 0..255) {
-            s[i] = i
-        }
-        var t = 0
-        var tmp: Int
-        for (i in 0..255) {
-            t = (t + s[i] + (b1[i % b1.size] and 0xff.toByte())) % 256
-            tmp = s[i]
-            s[i] = s[t]
-            s[t] = tmp
-        }
-        var x = 0
-        var y = 0
-        for (i in 0..b2.size - 1) {
-            y = (y + 1) % 256
-            x = (x + s[y]) % 256
-            tmp = s[x]
-            s[x] = s[y]
-            s[y] = tmp
-            result[i] = (b2[i] and 0xff.toByte() xor s[(s[x] + s[y]) % 256].toByte())
-        }
-        return result
-
-    }
 }
