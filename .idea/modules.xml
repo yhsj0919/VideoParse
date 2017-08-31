@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/VideoParse.iml" filepath="$PROJECT_DIR$/VideoParse.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/parse/parse.iml" filepath="$PROJECT_DIR$/parse/parse.iml" />
-      <module fileurl="file://$PROJECT_DIR$/videoPlayer/videoPlayer.iml" filepath="$PROJECT_DIR$/videoPlayer/videoPlayer.iml" />
     </modules>
   </component>
 </project>

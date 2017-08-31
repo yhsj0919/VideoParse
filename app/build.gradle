@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 25
@@ -26,6 +27,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compile 'com.android.support:design:25.3.1'
     compile project(':parse')
-    compile project(':videoPlayer')
+    //完整版引入
+    compile 'com.shuyu:GSYVideoPlayer:2.0.5'
 }
 

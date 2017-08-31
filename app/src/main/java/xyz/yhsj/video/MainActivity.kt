@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var et_url: EditText
     lateinit var btn_parse: Button
 
-    val netArray = arrayListOf("爱奇艺", "优酷", "酷狗", "乐视", "网易云音乐", "搜狐", "腾讯")
+    val netArray = arrayListOf("百度音乐", "哔哩哔哩", "爱奇艺", "优酷", "酷狗", "乐视", "网易云音乐", "搜狐", "腾讯")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +109,14 @@ class MainActivity : AppCompatActivity() {
 //                            QQ.download("https://v.qq.com/x/cover/kp4m5ys7tms73cd.html")
 //                            QQ.download("http://kg.qq.com/share.html?s=2QEQDZ2QTvNYN2qz")
 
+                        }
+                        "百度音乐" -> {
+//                            BaiduMusic.parse("http://music.baidu.com/song/100575177")
+                            BaiduMusic.parseList("http://music.baidu.com/album/93104033")
+                        }
+                        "哔哩哔哩" -> {
+                            Bilibili.getId("https://www.bilibili.com/video/av13715520/")
+//                            BaiduMusic.parseList("http://music.baidu.com/album/93104033")
                         }
                     }
                 } catch (e: Exception) {

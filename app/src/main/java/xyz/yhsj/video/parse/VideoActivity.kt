@@ -5,17 +5,16 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.shuyu.gsyvideoplayer.GSYVideoManager
-import com.shuyu.gsyvideoplayer.GSYVideoPlayer
 import com.shuyu.gsyvideoplayer.model.GSYVideoModel
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.shuyu.gsyvideoplayer.video.ListGSYVideoPlayer
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
-import xyz.yhsj.parse.entity.MediaFile
+import com.shuyu.gsyvideoplayer.video.base.GSYVideoPlayer
 import xyz.yhsj.parse.entity.MediaUrl
 import xyz.yhsj.video.R
 import xyz.yhsj.video.listener.SampleListener
-import java.util.ArrayList
+import java.util.*
 
 class VideoActivity : AppCompatActivity() {
     lateinit var player: ListGSYVideoPlayer
@@ -114,7 +113,7 @@ class VideoActivity : AppCompatActivity() {
         //如果旋转了就全屏
         if (isPlay && !isPause) {
             if (newConfig.orientation == ActivityInfo.SCREEN_ORIENTATION_USER) {
-                if (!player.isIfCurrentIsFullscreen()) {
+                if (!player.isIfCurrentIsFullscreen) {
                     player.startWindowFullscreen(this, true, true)
                 }
             } else {
@@ -150,11 +149,15 @@ class VideoActivity : AppCompatActivity() {
         isPause = false
     }
 
+    override fun onStop() {
+        super.onStop()
+        GSYVideoPlayer.releaseAllVideos()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         GSYVideoPlayer.releaseAllVideos()
         //GSYPreViewManager.instance().releaseMediaPlayer();
-        if (orientationUtils != null)
-            orientationUtils.releaseListener()
+        orientationUtils.releaseListener()
     }
 }

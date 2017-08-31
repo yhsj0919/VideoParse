@@ -2,35 +2,22 @@ package xyz.yhsj.video.parse
 
 import android.content.Intent
 import android.net.Uri
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.widget.Toast
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.activity_video_parse.*
+import xyz.yhsj.parse.entity.MediaType
 import xyz.yhsj.parse.entity.ParseResult
-import xyz.yhsj.video.BaseActivity
+import xyz.yhsj.parse.extractors.*
 import xyz.yhsj.parse.match0
 import xyz.yhsj.parse.runAsync
+import xyz.yhsj.video.BaseActivity
 import xyz.yhsj.video.R
 import xyz.yhsj.video.adapter.VideoStreamAdapter
-import android.text.Spannable
-import android.text.style.ImageSpan
-import android.graphics.BitmapFactory
-import android.graphics.Bitmap
-import android.text.SpannableStringBuilder
-import android.widget.TextView
-import xyz.yhsj.parse.entity.MediaType
-import xyz.yhsj.parse.extractors.*
 
 
 class VideoParseActivity : BaseActivity() {
-    val recyclerView by bindView<RecyclerView>(R.id.recyclerView)
-    val toolbar by bindView<Toolbar>(R.id.toolbar)
-    val toolbarLayout by bindView<CollapsingToolbarLayout>(R.id.toolbar_layout)
-    val fab by bindView<FloatingActionButton>(R.id.fab)
 
     var htmlUrl: String? = null
     lateinit var streamAdapter: VideoStreamAdapter

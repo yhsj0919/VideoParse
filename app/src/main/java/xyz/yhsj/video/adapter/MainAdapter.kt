@@ -19,6 +19,7 @@ class MainAdapter(recyclerView: RecyclerView) : BaseRecyclerViewAdapter<String>(
             "腾讯" -> helper.setImageResource(R.id.img, R.drawable.ic_qq)
             "搜狐" -> helper.setImageResource(R.id.img, R.drawable.ic_sohu)
             "酷狗" -> helper.setImageResource(R.id.img, R.drawable.ic_kugou)
+            else -> helper.setImageResource(R.id.img, R.drawable.ic_qq)
         }
     }
 }
