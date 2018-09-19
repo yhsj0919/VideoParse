@@ -1,3 +1,8 @@
+**这个可能不再维护了,音乐可以参考KMusic,视频请参考KVideo**
+
+**KMusic相对完善一些,支持7大网站,不支持付费音乐解析**
+**KVideo刚开始,支持全网搜索,以后有时间了,再做专门的解析**
+
 # VideoParse https://github.com/yhsj0919/VideoParse
 
 **该代码仅供研究学习,切勿商用**
